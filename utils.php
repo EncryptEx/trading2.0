@@ -1169,3 +1169,16 @@ function adjustBrightness($hexCode, $adjustPercent)
 
 	return '#' . implode($hexCode);
 }
+
+/**
+ * Bug-fix betweeen Php versions
+ */
+if (!function_exists('str_starts_with')) {
+	function str_starts_with($haystack, $needle, $case = true)
+	{
+	  if ($case) {
+		return strpos($haystack, $needle, 0) === 0;
+	  }
+	  return stripos($haystack, $needle, 0) === 0;
+	}
+}
