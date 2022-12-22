@@ -140,7 +140,7 @@ $userid = $_SESSION['usr'];
 								<div class="row">
 									<div class="col-4 col-sm-2 col-xl-1">
 										<div class="d-block my-2">
-											<img class="flagIconrounded img-fluid shadow-sm" src="https://countryflagsapi.com/png/<?php /* thanks flag api*/ echo htmlentities($auction['countryCode']); ?>" alt="">
+											<img class="flagIconrounded img-fluid shadow-sm" crossorigin="anonymous" src="https://countryflagsapi.com/png/<?php /* thanks flag api*/ echo htmlentities($auction['countryCode']); ?>" alt="">
 										</div>
 									</div>
 									<div class="col-8 col-sm-10 col-xl-11">
@@ -178,7 +178,7 @@ $userid = $_SESSION['usr'];
 					<!-- Modal body -->
 					<div class="modal-body row">
 						<div class="col-4 mt-2">
-							<img src="" alt="country that is being purchased" id="countryImagePreview" style="width: 100%;" class="rounded shadow">
+							<img  crossorigin="anonymous" src="" alt="country that is being purchased" id="countryImagePreview" style="width: 100%;" class="rounded shadow">
 						</div>
 						<div class="col-8">
 							You are going to spend a total of <code>$<?php echo htmlentities(number_format($countryBasePrice, 0)); ?></code> to buy the country of <b class="countryName"></b>
