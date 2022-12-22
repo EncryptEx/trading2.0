@@ -1,0 +1,1171 @@
+<?php
+//
+// Utils File --> Main File where magic happens
+//
+require 'credentials.php';
+
+
+
+// Start DB
+$dsn = "mysql:host={$host};dbname={$dbname};charset={$charset}";
+$options = [
+	PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // highly recommended
+	PDO::ATTR_EMULATE_PREPARES => false // ALWAYS! ALWAYS! ALWAYS!
+];
+$pdo = new PDO($dsn, $user, $pass, $options);
+
+function Islogged($usr)
+{
+	if (!isset($usr)) {
+		header("location:login.php");
+		die();
+	}
+}
+
+
+
+
+
+function getValue($markid)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-value` WHERE marketid=:marketid ORDER BY `id` DESC ";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['marketid' => $markid];
+	$selectStmt->execute($input);
+	if ($markid == 0) {
+		return 1;
+	}
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			return $row['value'];
+		}
+	}
+	return 0;
+}
+function getName($markid)
+{
+	global $pdo;
+	if ($markid == 0) {
+		return 'USD';
+	}
+	$SQL_SELECT = "SELECT * FROM `market-list` WHERE id=:id LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['id' => $markid];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			return $row['name'];
+		}
+	}
+	return NULL;
+}
+
+
+function getImageUrl($markid)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-list` WHERE id=:id LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['id' => $markid];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			return $row['logo'];
+		}
+	}
+	return 0;
+}
+
+function getBalance($userid)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-balances` WHERE ownerid=:ownerid";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['ownerid' => $userid];
+	$selectStmt->execute($input);
+	$total = 0;
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			$total = $total + ($row['quantity'] * getValue($row['marketid']));
+		}
+	}
+	// apart from adding balance in coins, also add made offers
+	$SQL_SELECT = "SELECT * FROM `market-offers` WHERE ownerId=:ownerId";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['ownerId' => $userid];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			$total = $total + ($row['USD']);
+		}
+	}
+	return $total;
+}
+function getArrayBalances($userid)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-balances` WHERE ownerid=:ownerid";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['ownerid' => $userid];
+	$selectStmt->execute($input);
+	$total = [];
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			array_push($total, array(getName($row['marketid']), $row['quantity'] * getValue($row['marketid'])));
+		}
+	}
+	return $total;
+}
+function getUserName($userid)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-users` WHERE id=:id";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['id' => $userid];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			return $row['name'];
+		}
+	}
+	return false;
+}
+function getLogo($marketid)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-list` WHERE id=:id";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['id' => $marketid];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			return $row['logo'];
+		}
+	}
+	return false;
+}
+function getOwnership($marketid, $userid)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-balances` WHERE ownerid=:ownerid AND marketid=:marketid LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['ownerid' => $userid, 'marketid' => $marketid];
+	$selectStmt->execute($input);
+	$total = 0;
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			$total = $row['quantity'];
+		}
+	}
+	return $total;
+}
+function doesOwnershipRowExist($marketid, $userid)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-balances` WHERE ownerid=:ownerid AND marketid=:marketid LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['ownerid' => $userid, 'marketid' => $marketid];
+	$selectStmt->execute($input);
+	$total = false;
+	if ($selectStmt->rowCount() > 0) {
+		$total = true;
+	}
+	return $total;
+}
+function hasClaimedAirdrop($userid, $airID)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-airdrops-claim` WHERE userid=:userid AND airdropID=:airdropID";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['userid' => $userid, 'airdropID' => $airID];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		return true;
+	}
+	return false;
+}
+function getLastAirdrop()
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-airdrops` WHERE active=1 ORDER BY `timestamp` DESC LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$selectStmt->execute([]);
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			return ['status' => true, 'timestamp' => $row['timestamp'], 'quantity' => $row['quantity'], 'marketid' => $row['marketid'], 'ftimestamp' => $row['ftimestamp'], 'id' => $row['id']];
+		}
+	}
+	return ['status' => false];
+}
+function expireAirdrop()
+{
+	global $pdo;
+	$statement = "UPDATE `market-airdrops` SET active=0 WHERE active=1 LIMIT 1";
+	$preparedstmt = $pdo->prepare($statement);
+	$preparedstmt->execute([]);
+}
+function inject($userid, $marketid, $quantity)
+{
+	global $pdo;
+	$ownershipmarket = doesOwnershipRowExist($marketid, $userid);
+	if (!$ownershipmarket) {
+		// not saved into db
+		// insert:
+		$SQL_INSERT = "INSERT INTO `market-balances` (id, ownerid, marketid, quantity) VALUES (NULL, :ownerid, :marketid, :quantity)";
+		$insrtstmnt = $pdo->prepare($SQL_INSERT);
+		return $insrtstmnt->execute(['quantity' => $quantity, 'ownerid' => $userid, 'marketid' => $marketid]);
+	} else {
+		$ActualQuantity = getOwnership($marketid, $userid);
+		$money = $ActualQuantity + $quantity;
+		$statement = "UPDATE `market-balances` SET quantity=:quantity WHERE ownerid=:ownerid AND marketid=:marketid LIMIT 1";
+		$preparedstmt = $pdo->prepare($statement);
+		return $preparedstmt->execute(['quantity' => $money, 'ownerid' => $userid, 'marketid' => $marketid]);
+	}
+}
+function claimAirdrop($userid)
+{
+	global $pdo;
+	$aird = getLastAirdrop();
+	$isExpired = false;
+	$IsAirdrop = false;
+	if ($aird['status']) {
+		if ($aird['timestamp'] <= time()) {
+			$isNextAirdropReady = true;
+		}
+		$IsAirdrop = true;
+		if ($aird['ftimestamp'] <= time()) {
+			// invalidate airdrop
+			// echo 'airdrop expired.';
+			expireAirdrop();
+			$isExpired = true;
+		}
+
+		if ($isNextAirdropReady && $IsAirdrop && !$isExpired && !hasClaimedAirdrop($userid, $aird['id'])) {
+			$SQL_INSERT = "INSERT INTO `market-airdrops-claim` (id, airdropID, userid, quantity) VALUES (NULL, :airdropID, :userid, :quantity)";
+			$insrtstmnt = $pdo->prepare($SQL_INSERT);
+			$input = ['airdropID' => $aird['id'], 'userid' => $userid, 'quantity' => $aird['quantity'] * getValue($aird['marketid'])];
+			$insrtstmnt->execute($input);
+			header('location:airdrop.php?s=1');
+		} else {
+			header('location:airdrop.php?e=7');
+		}
+	} else {
+		header('location:airdrop.php');
+	}
+}
+function generateAirdrop($marketid, $quantity, $uses, $timestamp, $ftimestamp)
+{
+	global $pdo;
+	$SQL_INSERT = "INSERT INTO `market-airdrops` (id, marketid, quantity, uses, timestamp, ftimestamp, active) VALUES (NULL, :marketid, :quantity, :uses, :timestamp, :ftimestamp, :active)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	$input = ['marketid' => $marketid, 'quantity' => $quantity, 'uses' => $uses, 'timestamp' => $timestamp, 'ftimestamp' => $ftimestamp, 'active' => 1];
+	$insrtstmnt->execute($input);
+}
+function getUserIDs()
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-users`";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   [];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		return $selectStmt;
+	}
+	return false;
+}
+function getTopMarket()
+{
+	global $pdo;
+	$c = 0;
+	// foreach (getMarkets() as $row) {
+	//   $c++;
+	// }
+	$SQL_SELECT = "SELECT MAX(`value`), `marketid` FROM `market-value`";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   [];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		// array_push($total, $row['value']);
+		foreach ($selectStmt as $row) {
+			// array_push($prices, $row['marketid'], $row['value']);
+			return [$row['marketid'], $row['MAX(`value`)']];
+		}
+		// $value = max($prices);
+		// return [$value,array_search($value, $prices)];
+		// return $prices;
+	}
+}
+function getTopAirdropClaim()
+{
+	global $pdo;
+	$c = 0;
+	// foreach (getMarkets() as $row) {
+	//   $c++;
+	// }
+	$SQL_SELECT = "SELECT MAX(`quantity`) FROM `market-airdrops-claim`";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   [];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		// array_push($total, $row['value']);
+		foreach ($selectStmt as $row) {
+			// array_push($prices, $row['marketid'], $row['value']);
+			return [true, $row['MAX(`quantity`)']];
+		}
+		return [false];
+		// $value = max($prices);
+		// return [$value,array_search($value, $prices)];
+		// return $prices;
+	}
+}
+
+
+function getMarkets()
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-list`";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$selectStmt->execute([]);
+
+	if ($selectStmt->rowCount() > 0) {
+		return $selectStmt;
+	}
+	return false;
+}
+function doesExistUser($username)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-users` WHERE username=:username";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$selectStmt->execute(['username' => $username]);
+
+	if ($selectStmt->rowCount() > 0) {
+		return true;
+	}
+	return false;
+}
+function getPercentage($marketid)
+{
+	global $pdo;
+
+	$SQL_SELECT = "SELECT * FROM `market-value` WHERE marketid=:marketid ORDER BY `id` DESC ";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$selectStmt->execute(['marketid' => $marketid]);
+	$isf = true;
+	$new = 0;
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			if ($isf) {
+				$isf = false;
+				$new = $row['value'];
+				continue;
+			}
+			$old = $row['value'];
+			if ($old <= 0 && $new <= 0 || $old == 0) {
+				return 0;
+			}
+			// old - - 100
+			//  new -x
+			// real value  = 100 -x
+			// echo ((($old*100)/$new+0.0001)-100)." ";
+			// return -round((($old*100)+1)/($new+1)-102,2);
+			return -round(
+				100 - (($new * 100) / ($old)),
+				2
+			);
+			// old ---- 100
+			//  new ---- x
+			// x = new * 100 / old
+		}
+	}
+	return false;
+}
+
+function RetrieveError($errorid)
+{
+	global $marketid;
+	switch ($errorid) {
+		case 1:
+			$e = 'No values recieved';
+			break;
+		case 2:
+			$e = "You don't have enough money to buy that! You have: $" . htmlentities($_GET['v']);
+			break;
+		case 3:
+			$e = "You don't have enoguh coins of this market to withdraw that quantity! You have: " . htmlentities($_GET['v']);
+			break;
+		case 4:
+			$e = "The actual fee is higher than the quantity you were wanting to buy.";
+			break;
+		case 5:
+			$e = "The actual fee is higher than the quantity you were wanting to sell.";
+			break;
+		case 7:
+			$e = "You have already claimed this airdrop.";
+			break;
+		case 8:
+			$e = "Your Acconut has been banned";
+			break;
+		case 9:
+			$e = "The password or username do not match";
+			break;
+		case 10:
+			$e = "You can't afford that quantity. Try something lower.";
+			break;
+		case 11:
+			$e = "The number of tickets must not exceed 100";
+			break;
+		case 12:
+			$e = "Recieved a non-numeric value.";
+			break;
+		case 13:
+			$e = "That username already exists";
+			break;
+		case 14:
+			$e = "The username or name is too long";
+			break;
+		case 15:
+			$e = "You can't transfer money to you";
+			break;
+		case 16:
+			$e = "A database error ocurred";
+			break;
+		case 17:
+			$e = "That country is not in auction.";
+			break;
+		case 18:
+			$e = "The country is not valid or has an actual owner";
+			break;
+		case 19:
+			$e = "The country is not valid or is not in auction right now";
+			break;
+		case 20:
+			$e = "The entered bet is smaller than the starting price or last bet. Please increase your bet to proceed.";
+			break;
+		case 21:
+			$e = "You can't bid if your last bid was yours.";
+			break;
+		case 22:
+			$e = "You can't bid in your own auction.";
+			break;
+		case 23:
+			$e = "You can't cancel an auction that's not yours.";
+			break;
+		case 23:
+			$e = "You can't end an auction that's is already ending";
+			break;
+		case 24:
+			$e = "That auction has already ended.";
+			break;
+		case 999:
+			$e = "Something went really bad. Please contact an administrator. " . htmlentities($_GET['v']);
+			break;
+		default:
+			$e = 'Something went wrong';
+			# code...
+			break;
+	}
+	return "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+  <button type='button' class='close' data-dismiss='alert'>&times;</button>
+  <strong>Error!</strong>  " . $e . "</div>";
+}
+
+function canAfford($quantity, $userid, $marketid)
+{
+	// market id is always 0 bc is USD withdrawed
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-balances` WHERE ownerid=:ownerid AND marketid=:marketid";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$selectStmt->execute(['ownerid' => $userid, 'marketid' => $marketid]);
+
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			if (floatval($row['quantity']) >= floatval($quantity)) { // if money USD > SOMETHING then OK
+				return [true, $row['quantity']];
+			} else {
+				return [false, $row['quantity'], floatval($quantity)];
+			}
+		}
+	}
+	return [false, 0];
+}
+
+
+function transfer($fromUserID, $toUserID, $quantity, $feeDollars)
+{
+	inject($toUserID, 0, $quantity);
+
+	substract(0, $fromUserID, $quantity + $feeDollars);
+	return;
+}
+
+function substract($marketid, $ownerid, $quantityInCoins)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-balances` WHERE ownerid=:ownerid AND marketid=:marketid LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$selectStmt->execute(['ownerid' => $ownerid, 'marketid' => $marketid]);
+
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			$newQ = floatval($row['quantity'] - ($quantityInCoins));
+			if ($newQ < 0) {
+				// is negative. something went wrong.
+				$error = $newQ;
+				$newQ = 0;
+			}
+			$statement = "UPDATE `market-balances` SET quantity=:quantity WHERE ownerid=:ownerid AND marketid=:marketid";
+			$preparedstmt = $pdo->prepare($statement);
+			$input =   ['quantity' => $newQ, 'ownerid' => $ownerid, 'marketid' => $marketid];
+			$preparedstmt->execute($input);
+
+			if (isset($error)) {
+				header("location:index.php?e=999&v=" . $error);
+				die();
+			}
+		}
+	}
+}
+
+function addition($userid, $marketid, $quantityInCoins)
+{
+	global $pdo;
+	$SQL_INSERT = "INSERT INTO `market-balances` (id, ownerid, marketid, quantity) VALUES (NULL, :ownerid, :marketid, :quantity)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	$input = ['ownerid' => $userid, 'marketid' => $marketid, 'quantity' => $quantityInCoins];
+	$insrtstmnt->execute($input);
+}
+function logInUser($username, $password)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-users` WHERE username=:username AND password=:password LIMIT 1 ";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['username' => $username, 'password' => hash('SHA256', $password)];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			if ($row['status'] == 1) {
+				// not banned
+				return [true, $row['id']];
+			} else {
+				// banned
+				return [false, 1];
+			}
+		}
+	} else {
+		// not correct
+		return [false, 0];
+	}
+	return 0;
+}
+function loginUserById($id)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-users` WHERE id=:id LIMIT 1 ";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['id' => $id];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		foreach ($selectStmt as $row) {
+			if ($row['status'] == 1) {
+				// not banned
+				return [true, $row['id']];
+			} else {
+				return [false, 1];
+			}
+		}
+	} else {
+		return [false, 0];
+	}
+	return 0;
+}
+function anyUser()
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT id FROM `market-users` LIMIT 1 ";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   [];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+function CheckClamp($current, $min, $max)
+{
+	if ($current < $min) {
+		return false;
+	}
+	if ($current > $max) {
+		return false;
+	}
+	return true;
+}
+
+function CreateUser($username, $name, $password, $status)
+{
+	global $pdo;
+	$sqlInsert = "INSERT INTO `market-users` (id, name, username, password, status, color) VALUES (NULL, :name, :username, :password, :status, :color)";
+	$selectStmt = $pdo->prepare($sqlInsert);
+	$input =   ['username' => $username, 'password' => hash('SHA256', $password), 'status' => $status, 'name' => $name, 'color' => dechex(random_int(0, 16777215))];
+	$selectStmt->execute($input);
+	$SQL_SELECT = "SELECT `id` FROM `market-users` WHERE username=:username LIMIT 1";
+	$selectStmtSEL = $pdo->prepare($SQL_SELECT);
+	$inputS =   ['username' => $username];
+	$selectStmtSEL->execute($inputS);
+	if ($selectStmtSEL->rowCount() > 0) {
+		foreach ($selectStmtSEL as $row) {
+			return $row['id'];
+		}
+	}
+	return false;
+}
+
+
+
+function encrypt($data)
+{
+	// import private key saved into credentials.php
+	global $privkey;
+
+	$encrypted = base64_encode($data);
+	$encrypted .= "||";
+	$encrypted .= hash("SHA256", $privkey . $data);
+	return $encrypted;
+}
+
+function decrypt($data)
+{
+	global $privkey;
+
+	$userid = base64_decode(explode("||", $data)[0]);
+	if (hash("SHA256", $privkey . $userid) == explode("||", $data)[1]) {
+		return $userid;
+	}
+	return false;
+}
+
+
+function newOffer($type, $userId, $marketId, $coins, $offerUSD, $PPU)
+{
+	if ($type == "BUY") {
+		$encType = 0;
+	} else if ($type == "SELL") {
+		$encType = 1;
+	} else {
+		throw new Error("Offer type unknown");
+	}
+	global $pdo;
+	$SQL_INSERT = "INSERT INTO `market-offers` (id, ownerId, type, marketId, quantity, USD, pricePerUnit) VALUES (NULL, :ownerId, :type, :marketId, :quantity, :USD, :pricePerUnit)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	return $insrtstmnt->execute(['ownerId' => $userId, 'type' => $encType, 'marketId' => $marketId, 'quantity' => $coins, 'USD' => $offerUSD, 'pricePerUnit' => $PPU]);
+}
+
+
+function checkMatch($marketId)
+{
+	global $pdo;
+	// buy
+	$SQL_SELECT = "SELECT * FROM `market-offers` WHERE type=:type AND marketId=:marketId ORDER BY `pricePerUnit` DESC";
+	$buyOffers = $pdo->prepare($SQL_SELECT);
+	$input =   ['type' => 0, 'marketId' => $marketId];
+	$buyOffers->execute($input);
+
+	// sell 
+	$SQL_SELECT2 = "SELECT * FROM `market-offers` WHERE type=:type AND marketId=:marketId ORDER BY `pricePerUnit` ASC";
+	$sellOffers = $pdo->prepare($SQL_SELECT2);
+	$input =   ['type' => 1, 'marketId' => $marketId];
+	$sellOffers->execute($input);
+
+	$buyOffers = $buyOffers->fetchAll();
+	$sellOffers = $sellOffers->fetchAll();
+
+	if (count($buyOffers) == 0 || count($sellOffers) == 0) {
+		// no suficient offers to continue.
+		return;
+	}
+
+	$sellPrices = array();
+	$buyPrices = array();
+	foreach ($sellOffers as $sellOffer) {
+		array_push($sellPrices, $sellOffer['pricePerUnit']);
+	}
+	foreach ($buyOffers as $buyOffer) {
+		array_push($buyPrices, $buyOffer['pricePerUnit']);
+	}
+
+	if (min($sellPrices) == max($buyPrices)) {
+		echo 'match found';
+		// match	
+		// get index to retrieve the owners
+		$lowestSellIndex = array_search(min($sellPrices), $sellPrices);
+		$highestBuyIndex = array_search(max($buyPrices), $buyPrices);
+
+		$sellObject = $sellOffers[$lowestSellIndex];
+		$buyObject = $buyOffers[$highestBuyIndex];
+
+		$sellerId = $sellObject['ownerId'];
+		$buyerId = $buyObject['ownerId'];
+
+		// basic main data
+		$pricePerUnit = $buyObject['pricePerUnit'];
+		$quantityBought = $buyObject['quantity'];
+		$dollarsSpent = $quantityBought * $pricePerUnit;
+
+		// check quantities requested and selled
+		if ($sellObject['quantity'] > $buyObject['quantity']) {
+			// offering more than requested. 
+			// substract selled the bought quantity to the sell quantity 
+			// eg:  3@100  			4@100
+			// 					--> 1@100 remaining
+
+			$quantityRemaining = $sellObject['quantity'] - $buyObject['quantity'];
+
+			//generate new balance (num of remaining quantities times PPU)
+			$newUSD = $pricePerUnit * $quantityRemaining;
+			// update sell offer
+			updateOfferQuantity($sellObject['id'], $sellerId, $quantityRemaining, $newUSD);
+
+			// remove buy offer
+			removeOffer($buyObject['id'], $buyerId);
+		} else if ($sellObject['quantity'] == $buyObject['quantity']) {
+			// exact match in terms of quantity
+
+			//remove both offers since they are the same quantity
+			removeOffer($buyObject['id'], $buyerId);
+			removeOffer($sellObject['id'], $sellerId);
+		} else if ($sellObject['quantity'] < $buyObject['quantity']) {
+			// selling less than wanted. 
+			// delete sell offer and search for another match with same price,
+			// also substract quantity of buy eg: 
+			// 3@100 			1@100
+			// 2@100 <---		search for more @100, else do nothing
+			$quantityRemaining = $buyObject['quantity'] - $sellObject['quantity'];
+
+			//generate new balance (num of remaining quantities times PPU)
+			$newUSD = $pricePerUnit * $quantityRemaining;
+			// update sell offer
+			updateOfferQuantity($buyObject['id'], $buyerId, $quantityRemaining, $newUSD);
+
+			// remove buy offer
+			removeOffer($sellObject['id'], $sellerId);
+		}
+
+
+		// do transaction
+		// seller wants dollars, so marketId is 0.
+		inject($sellerId, 0, $dollarsSpent); // seller recieves the dollars
+		// buyer recieves coins
+		inject($buyerId, $marketId, $quantityBought);
+
+		// log transaction
+		logTransaction($buyerId, $sellerId, $marketId, $quantityBought, $dollarsSpent);
+
+		// update price
+		insertValue($marketId, $pricePerUnit);
+	} else {
+		// no match.
+	}
+}
+
+function getOffers($type, $marketId)
+{
+	checkMatch($marketId);
+	if ($type == "BUY") {
+		$encType = 0;
+		$filerPPU = "DESC";
+	} else if ($type == "SELL") {
+		$encType = 1;
+		$filerPPU = "ASC";
+	} else {
+		throw new Error("Offer type unknown");
+	}
+	global $pdo;
+	$SQL_SELECT = "SELECT id, ownerId, quantity, USD FROM `market-offers` WHERE type=:type AND marketId=:marketId ORDER BY `pricePerUnit` " . $filerPPU;
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['type' => $encType, 'marketId' => $marketId];
+	$selectStmt->execute($input);
+
+	return $selectStmt;
+}
+
+function removeOffer($offerId, $userId)
+{
+	global $pdo;
+
+	$SQL_SELECT = "SELECT * FROM `market-offers` WHERE id=:id AND ownerId=:ownerId LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['id' => $offerId, 'ownerId' => $userId];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() == 0) {
+		return NULL;
+	}
+
+
+	$SQL_DELETE = "DELETE FROM `market-offers` WHERE id=:id AND ownerId=:ownerId LIMIT 1";
+
+	$deleteStmnt = $pdo->prepare($SQL_DELETE);
+
+	$input = ['id' => $offerId, 'ownerId' => $userId];
+
+	if ($deleteStmnt->execute($input)) {
+		$data = $selectStmt->fetchAll()[0];
+		if ($data['type'] == 0) {
+			// if is buy, marketId will be 0 since the money will be returned, 
+			return ['saveToUSD' => TRUE, 'quantity' => $data['USD'], 'marketId' => 0];
+		}
+		// otherwise, the returned coins will be in the market that they originally were before the sell offer.
+		return ['saveToUSD' => FALSE, 'quantity' => $data['quantity'], 'marketId' => $data['marketId']];
+	} else {
+		return NULL;
+	}
+}
+
+function updateOfferQuantity($offerId, $userId, $newQuantity, $USD)
+{
+	global $pdo;
+	$statement = "UPDATE `market-offers` SET quantity=:quantity, USD=:USD WHERE id=:id AND ownerId=:ownerId";
+
+	$preparedstmt = $pdo->prepare($statement);
+
+	$input =   ['quantity' => $newQuantity, 'USD' => $USD, 'id' => $offerId, 'ownerId' => $userId];
+
+	return $preparedstmt->execute($input);
+}
+
+
+function logTransaction($buyerId, $sellerId, $marketId, $coinsBought, $dollarsSpent)
+{
+	global $pdo;
+	$SQL_INSERT = "INSERT INTO `market-transactions` (id, buyerId, sellerId, marketId, coins, dollars, timestamp) VALUES (NULL, :buyerId, :sellerId, :marketId, :coins, :dollars, :timestamp)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	$input = ['buyerId' => $buyerId, 'sellerId' => $sellerId, 'marketId' => $marketId, 'coins' => $coinsBought, 'dollars' => $dollarsSpent, 'timestamp' => time()];
+	return $insrtstmnt->execute($input);
+}
+
+
+function insertValue($markid, $value)
+{
+	global $pdo;
+
+	if ($value < 0) {
+		$value = 0;
+	}
+
+	$SQL_INSERT = "INSERT INTO `market-value` (marketid, value, timestamp) VALUES (:marketid, :value, :timestamp)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	$input = ['marketid' => $markid, 'value' => $value, 'timestamp' => time()];
+	$insrtstmnt->execute($input);
+}
+
+function getAllTransactions($marketId)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-transactions` WHERE  marketId=:marketId ORDER BY `timestamp` DESC";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['marketId' => $marketId];
+	$selectStmt->execute($input);
+
+	return $selectStmt;
+}
+
+
+// map section
+function isCountryOwned($countryCode)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-map` WHERE countryCode=:countryCode AND ownerId IS NOT NULL LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['countryCode' => $countryCode];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		return ['bool' => True, 'data' => $selectStmt->fetchAll()[0]];
+	}
+	return ['bool' => False];
+}
+
+function getCountryName($countryCode)
+{
+	$names =  ["Afghanistan", "Angola", "Albania", "United Arab Emirates", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Burundi", "Belgium", "Benin", "Burkina Faso", "Bangladesh", "Bulgaria", "Bahrain", "Bosnia and Herzegovina", "Belarus", "Belize", "Bolivia", "Brazil", "Brunei Darussalam", "Bhutan", "Botswana", "Central African Republic", "Canada", "Switzerland", "Chile", "China", "Côte d'Ivoire", "Cameroon", "Democratic Republic of the Congo", "Republic of Congo", "Colombia", "Costa Rica", "Cuba", "Czech Republic", "Germany", "Djibouti", "Denmark", "Dominican Republic", "Algeria", "Ecuador", "Egypt", "Eritrea", "Estonia", "Ethiopia", "Finland", "Fiji", "Gabon", "United Kingdom", "Georgia", "Ghana", "Guinea", "The Gambia", "Guinea-Bissau", "Equatorial Guinea", "Greece", "Greenland", "Guatemala", "Guyana", "Honduras", "Croatia", "Haiti", "Hungary", "Indonesia", "India", "Ireland", "Iran", "Iraq", "Iceland", "Israel", "Italy", "Jamaica", "Jordan", "Japan", "Kazakhstan", "Kenya", "Kyrgyzstan", "Cambodia", "Republic of Korea", "Kosovo", "Kuwait", "Lao PDR", "Lebanon", "Liberia", "Libya", "Sri Lanka", "Lesotho", "Lithuania", "Luxembourg", "Latvia", "Morocco", "Moldova", "Madagascar", "Mexico", "Macedonia", "Mali", "Myanmar", "Montenegro", "Mongolia", "Mozambique", "Mauritania", "Malawi", "Malaysia", "Namibia", "Niger", "Nigeria", "Nicaragua", "Netherlands", "Norway", "Nepal", "New Zealand", "Oman", "Pakistan", "Panama", "Peru", "Philippines", "Papua New Guinea", "Poland", "Dem. Rep. Korea", "Portugal", "Paraguay", "Palestine", "Qatar", "Romania", "Russia", "Rwanda", "Western Sahara", "Saudi Arabia", "Sudan", "South Sudan", "Senegal", "Sierra Leone", "El Salvador", "Serbia", "Suriname", "Slovakia", "Slovenia", "Sweden", "Swaziland", "Syria", "Chad", "Togo", "Thailand", "Tajikistan", "Turkmenistan", "Timor-Leste", "Tunisia", "Turkey", "Taiwan", "Tanzania", "Uganda", "Ukraine", "Uruguay", "United States", "Uzbekistan", "Venezuela", "Vietnam", "Vanuatu", "Yemen", "South Africa", "Zambia", "Zimbabwe", "Somalia", "France", "France", "Spain", "Aruba", "Anguilla", "Andorra", "Antigua and Barbuda", "Bahamas", "Bermuda", "Barbados", "Comoros", "Cape Verde", "Cayman Islands", "Dominica", "Falkland Islands", "Faeroe Islands", "Grenada", "Hong Kong", "Saint Kitts and Nevis", "Saint Lucia", "Liechtenstein", "Saint Martin (French)", "Maldives", "Malta", "Montserrat", "Mauritius", "New Caledonia", "Nauru", "Pitcairn Islands", "Puerto Rico", "French Polynesia", "Singapore", "Solomon Islands", "São Tomé and Principe", "Saint Martin (Dutch)", "Seychelles", "Turks and Caicos Islands", "Tonga", "Trinidad and Tobago", "Saint Vincent and the Grenadines", "British Virgin Islands", "United States Virgin Islands", "Cyprus", "Reunion (France)", "Mayotte (France)", "Martinique (France)", "Guadeloupe (France)", "Curaco (Netherlands)", "Canary Islands (Spain)"];
+	$acronyms = ["AF", "AO", "AL", "AE", "AR", "AM", "AU", "AT", "AZ", "BI", "BE", "BJ", "BF", "BD", "BG", "BH", "BA", "BY", "BZ", "BO", "BR", "BN", "BT", "BW", "CF", "CA", "CH", "CL", "CN", "CI", "CM", "CD", "CG", "CO", "CR", "CU", "CZ", "DE", "DJ", "DK", "DO", "DZ", "EC", "EG", "ER", "EE", "ET", "FI", "FJ", "GA", "GB", "GE", "GH", "GN", "GM", "GW", "GQ", "GR", "GL", "GT", "GY", "HN", "HR", "HT", "HU", "ID", "IN", "IE", "IR", "IQ", "IS", "IL", "IT", "JM", "JO", "JP", "KZ", "KE", "KG", "KH", "KR", "XK", "KW", "LA", "LB", "LR", "LY", "LK", "LS", "LT", "LU", "LV", "MA", "MD", "MG", "MX", "MK", "ML", "MM", "ME", "MN", "MZ", "MR", "MW", "MY", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NZ", "OM", "PK", "PA", "PE", "PH", "PG", "PL", "KP", "PT", "PY", "PS", "QA", "RO", "RU", "RW", "EH", "SA", "SD", "SS", "SN", "SL", "SV", "RS", "SR", "SK", "SI", "SE", "SZ", "SY", "TD", "TG", "TH", "TJ", "TM", "TL", "TN", "TR", "TW", "TZ", "UG", "UA", "UY", "US", "UZ", "VE", "VN", "VU", "YE", "ZA", "ZM", "ZW", "SO", "GF", "FR", "ES", "AW", "AI", "AD", "AG", "BS", "BM", "BB", "KM", "CV", "KY", "DM", "FK", "FO", "GD", "HK", "KN", "LC", "LI", "MF", "MV", "MT", "MS", "MU", "NC", "NR", "PN", "PR", "PF", "SG", "SB", "ST", "SX", "SC", "TC", "TO", "TT", "VC", "VG", "VI", "CY", "RE", "YT", "MQ", "GP", "CW", "IC"];
+	return $names[array_search($countryCode, $acronyms)];
+}
+
+/** 
+ * Return all countries that a specific user has 
+ * @param int userid
+ * @return array countries owned
+ */
+function getOwnedCountries($userId)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-map` WHERE ownerId=:ownerId";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['ownerId' => $userId];
+	$selectStmt->execute($input);
+	return $selectStmt->fetchAll();
+}
+/** 
+ * Return if a user owns a specific country 
+ * @param int userid
+ * @param string countryCode
+ * @return bool result if it owns it
+ */
+function doesUserOwnThisCountry($userId, $countryCode)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-map` WHERE ownerId=:ownerId AND countryCode=:countryCode LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['ownerId' => $userId, 'countryCode' => $countryCode];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		return true;
+	}
+	return false;
+}
+
+
+/** 
+ * Sets a new country owner, either via insert or update
+ */
+function setCountryOwner($countryCode, $userId)
+{
+	global $pdo;
+	// check if row exists
+	$SQL_SELECT = "SELECT * FROM `market-map` WHERE countryCode=:countryCode LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['countryCode' => $countryCode];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		//update it
+		$statement = "UPDATE `market-map` SET ownerId=:ownerId WHERE countryCode=:countryCode LIMIT 1";
+		$preparedstmt = $pdo->prepare($statement);
+		$input = ['ownerId' => $userId, 'countryCode' => $countryCode];
+		return $preparedstmt->execute($input);
+	} else {
+		// insert it
+		$SQL_INSERT = "INSERT INTO `market-map` (id, countryCode, ownerId, timestamp) VALUES (NULL, :contryCode, :ownerId, :timestamp)";
+		$insrtstmnt = $pdo->prepare($SQL_INSERT);
+		$input = ['timestamp' => time(), 'contryCode' => $countryCode, 'ownerId' => $userId];
+		return $insrtstmnt->execute($input);
+	}
+}
+
+/** 
+ * Get the colorName of a certain user
+ */
+function getUserColor($userId)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-users` WHERE id=:id LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['id' => $userId];
+	$selectStmt->execute($input);
+	return $selectStmt->fetchAll()[0]['color'];
+}
+
+// auction section 
+function getCountriesAuction()
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-map-auctions`";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   [];
+	$selectStmt->execute($input);
+	return $selectStmt->fetchAll();
+}
+
+function doesAuctionExist($countryCode)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-map-auctions` WHERE countryCode=:countryCode LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['countryCode' => $countryCode];
+	$selectStmt->execute($input);
+	return $selectStmt->rowCount();
+}
+
+function removeAuction($countryCode, $entireVanish = false)
+{
+	global $pdo;
+	$SQL_DELETE = "DELETE FROM `market-map-auctions` WHERE countryCode=:countryCode LIMIT 1";
+
+	$deleteStmnt = $pdo->prepare($SQL_DELETE);
+
+	$input = ['countryCode' => $countryCode];
+
+	if (!$deleteStmnt->execute($input)) {
+		return false;
+	}
+	if (!$entireVanish) {
+		return true;
+	} // skip bet deletion. used in cancel action.
+
+	$SQL_DELETE = "DELETE FROM `market-map-bets` WHERE countryCode=:countryCode";
+
+	$deleteStmnt2 = $pdo->prepare($SQL_DELETE);
+
+	$input = ['countryCode' => $countryCode];
+
+	if (!$deleteStmnt2->execute($input)) {
+		return false;
+	}
+
+	return true;
+}
+
+function doesCountryExist($countryCode)
+{
+	$acronyms = ["AF", "AO", "AL", "AE", "AR", "AM", "AU", "AT", "AZ", "BI", "BE", "BJ", "BF", "BD", "BG", "BH", "BA", "BY", "BZ", "BO", "BR", "BN", "BT", "BW", "CF", "CA", "CH", "CL", "CN", "CI", "CM", "CD", "CG", "CO", "CR", "CU", "CZ", "DE", "DJ", "DK", "DO", "DZ", "EC", "EG", "ER", "EE", "ET", "FI", "FJ", "GA", "GB", "GE", "GH", "GN", "GM", "GW", "GQ", "GR", "GL", "GT", "GY", "HN", "HR", "HT", "HU", "ID", "IN", "IE", "IR", "IQ", "IS", "IL", "IT", "JM", "JO", "JP", "KZ", "KE", "KG", "KH", "KR", "XK", "KW", "LA", "LB", "LR", "LY", "LK", "LS", "LT", "LU", "LV", "MA", "MD", "MG", "MX", "MK", "ML", "MM", "ME", "MN", "MZ", "MR", "MW", "MY", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NZ", "OM", "PK", "PA", "PE", "PH", "PG", "PL", "KP", "PT", "PY", "PS", "QA", "RO", "RU", "RW", "EH", "SA", "SD", "SS", "SN", "SL", "SV", "RS", "SR", "SK", "SI", "SE", "SZ", "SY", "TD", "TG", "TH", "TJ", "TM", "TL", "TN", "TR", "TW", "TZ", "UG", "UA", "UY", "US", "UZ", "VE", "VN", "VU", "YE", "ZA", "ZM", "ZW", "SO", "GF", "FR", "ES", "AW", "AI", "AD", "AG", "BS", "BM", "BB", "KM", "CV", "KY", "DM", "FK", "FO", "GD", "HK", "KN", "LC", "LI", "MF", "MV", "MT", "MS", "MU", "NC", "NR", "PN", "PR", "PF", "SG", "SB", "ST", "SX", "SC", "TC", "TO", "TT", "VC", "VG", "VI", "CY", "RE", "YT", "MQ", "GP", "CW", "IC"];
+	return array_search($countryCode, $acronyms);
+}
+
+
+function getAuctionInfo($countryCode)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-map-auctions` WHERE countryCode=:countryCode LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['countryCode' => $countryCode];
+	$selectStmt->execute($input);
+	return $selectStmt->fetchAll()[0];
+}
+
+function checkAuctionExpiration($countryCode)
+{
+	$data = getAuctionInfo($countryCode);
+	$lastBet = getLastBet($countryCode);
+	if ($data['endAuction'] != NULL && $data['endAuction'] <= time()) {
+		$errors = [];
+		$errors[0] = inject($data['ownerId'], 0, $lastBet['bet']);
+		$errors[1] = transferCountryPropery($countryCode, $lastBet['ownerId']);
+		$errors[2] = removeAuction($countryCode, TRUE);
+
+		//check for any error
+		$res = array_unique($errors);
+		if (count($res) !== 1) {
+			header('location:map.php?e=16');
+		}
+	}
+}
+
+function auctionSetEndTimestmp($countryCode, $userId, $endTtimestamp)
+{
+	global $pdo;
+	$statement = "UPDATE `market-map-auctions` SET endAuction=:endAuction WHERE countryCode=:countryCode AND ownerId=:ownerId LIMIT 1";
+	$preparedstmt = $pdo->prepare($statement);
+	$input = ['countryCode' => $countryCode, 'ownerId' => $userId, 'endAuction' => $endTtimestamp];
+	return $preparedstmt->execute($input);
+}
+function transferCountryPropery($countryCode, $mewUserId)
+{
+	global $pdo;
+	$statement = "UPDATE `market-map` SET ownerId=:ownerId WHERE countryCode=:countryCode LIMIT 1";
+	$preparedstmt = $pdo->prepare($statement);
+	$input = ['countryCode' => $countryCode, 'ownerId' => $mewUserId];
+	return $preparedstmt->execute($input);
+}
+
+function getLastBet($countryCode)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-map-bets` WHERE countryCode=:countryCode ORDER BY timestamp DESC LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['countryCode' => $countryCode];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		return $selectStmt->fetchAll()[0];
+	}
+	return NULL;
+}
+
+function getBets($countryCode)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-map-bets` WHERE countryCode=:countryCode ORDER BY timestamp DESC";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['countryCode' => $countryCode];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		return $selectStmt->fetchAll();
+	}
+	return NULL;
+}
+function createBet($countryCode, $userId, $bet)
+{
+	global $pdo;
+	$SQL_INSERT = "INSERT INTO `market-map-bets` (id, ownerId, bet, countryCode, timestamp) VALUES (NULL, :ownerId, :bet, :countryCode, :timestamp)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	$input =   ['ownerId' => $userId, 'bet' => $bet, 'countryCode' => $countryCode, 'timestamp' => time()];
+	return $insrtstmnt->execute($input);
+}
+function createCountryAuction($countryCode, $userId, $startingPrice)
+{
+	global $pdo;
+	$SQL_INSERT = "INSERT INTO `market-map-auctions` (id, ownerId, countryCode, startingPrice, timestamp, endAuction) VALUES (NULL, :ownerId, :countryCode, :startingPrice, :timestamp, NULL)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	$input =   ['ownerId' => $userId, 'countryCode' => $countryCode, 'startingPrice' => $startingPrice, 'timestamp' => time()];
+	return $insrtstmnt->execute($input);
+}
+
+/** 
+ * Returns a human redable format date (10 min ago)
+ * @param int seconds elapsed
+ * @return string
+ */
+function time_since($since)
+{
+	$chunks = array(
+		array(31536000, 'year'),
+		array(2592000, 'month'),
+		array(604800, 'week'),
+		array(86400, 'day'),
+		array(3600, 'hour'),
+		array(60, 'minute'),
+		array(1, 'second')
+	);
+
+	for ($i = 0, $j = count($chunks); $i < $j; $i++) {
+		$seconds = $chunks[$i][0];
+		$name = $chunks[$i][1];
+		if (($count = floor($since / $seconds)) != 0) {
+			break;
+		}
+	}
+
+	$print = ($count == 1) ? '1 ' . $name : "$count {$name}s";
+	return $print;
+}
+
+/**
+ * Increases or decreases the brightness of a color by a percentage of the current brightness.
+ *
+ * @param   string  $hexCode        Supported formats: `#FFF`, `#FFFFFF`, `FFF`, `FFFFFF`
+ * @param   float   $adjustPercent  A number between -1 and 1. E.g. 0.3 = 30% lighter; -0.4 = 40% darker.
+ *
+ * @return  string
+ *
+ * @author  maliayas - stackoverflow question
+ */
+function adjustBrightness($hexCode, $adjustPercent)
+{
+	$hexCode = ltrim($hexCode, '#');
+
+	if (strlen($hexCode) == 3) {
+		$hexCode = $hexCode[0] . $hexCode[0] . $hexCode[1] . $hexCode[1] . $hexCode[2] . $hexCode[2];
+	}
+
+	$hexCode = array_map('hexdec', str_split($hexCode, 2));
+
+	foreach ($hexCode as &$color) {
+		$adjustableLimit = $adjustPercent < 0 ? $color : 255 - $color;
+		$adjustAmount = ceil($adjustableLimit * $adjustPercent);
+
+		$color = str_pad(dechex($color + $adjustAmount), 2, '0', STR_PAD_LEFT);
+	}
+
+	return '#' . implode($hexCode);
+}
