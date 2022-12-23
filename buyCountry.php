@@ -30,10 +30,10 @@ if(!doesCountryExist($countryCode) || isCountryOwned($countryCode)['bool']) {
 
 // check if has money to afford in USD, so mrktId = 0
 // pdo select
-
-$canAfford = canAfford($countryBasePrice, $userId, 0);
+$cost = getCountryBasePrice($countryCode);
+$canAfford = canAfford($cost, $userId, 0);
 if ($canAfford[0]) { //bol value is [0]
-	substract(0, $userId, $countryBasePrice);
+	substract(0, $userId, $cost);
     setCountryOwner($countryCode, $userId);
 	header("location:map.php?s=1&v=" . getCountryName($countryCode));
 } else {

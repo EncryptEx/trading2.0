@@ -92,11 +92,13 @@ foreach ($acronyms as $acronym) { ?>
     name: "<?php $cName = getCountryName($acronym); echo $cName; ?>",
     description: "<?php
                 $result = isCountryOwned($acronym);
+                $price = getCountryBasePrice($acronym);
                 if ($result['bool']) {
                   echo "Owned by: " . getUserName($result['data']['ownerId']);
                 } else {
-                  echo "For sale.<br>Base Price: $".number_format(getCountryBasePrice($acronym), 0, ",",".");
+                  echo "For sale.<br>Base Price: $".number_format($price, 0, ".",",");
                 }
+                echo "<br>Generates $".number_format(($price/1000),0, ".",",")."/daily";
                 
                 ?>",
     color: "<?php if ($result['bool']) {
@@ -117,7 +119,7 @@ foreach ($acronyms as $acronym) { ?>
       $extraS = "";
     }
     // echo "http" . $extraS . "://" . $_SERVER['HTTP_HOST'] . str_replace(basename($_SERVER['SCRIPT_FILENAME']), "", "/buyCountry.php?c=".$acronym);
-    echo "javascript:confirmBuy('".$acronym."', '". $cName. "');";
+    echo "javascript:confirmBuy('".$acronym."', '". $cName. "', ".$price.");";
   } ?>"},
 <?php
 }
