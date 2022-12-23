@@ -95,7 +95,7 @@ foreach ($acronyms as $acronym) { ?>
                 if ($result['bool']) {
                   echo "Owned by: " . getUserName($result['data']['ownerId']);
                 } else {
-                  echo "For sale.<br>Base Price: $".number_format($countryBasePrice, 0, ",",".");
+                  echo "For sale.<br>Base Price: $".number_format(getCountryBasePrice($acronym), 0, ",",".");
                 }
                 
                 ?>",
