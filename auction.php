@@ -107,7 +107,7 @@ $parsedMinBet = htmlentities(number_format($minimumBet, 0, ",", "."));
 				?>
 			</div>
 			<div class="col-4 col-md-2">
-				<img class="flagIconrounded img-fluid shadow" src="https://countryflagsapi.com/png/<?php /* thanks flag api*/ echo htmlentities($auction['countryCode']); ?>" alt="">
+				<img class="flagIconrounded img-fluid shadow" crossorigin="anonymous" src="https://countryflagsapi.com/png/<?php /* thanks flag api*/ echo htmlentities($auction['countryCode']); ?>" alt="">
 			</div>
 		</div>
 
@@ -127,7 +127,7 @@ $parsedMinBet = htmlentities(number_format($minimumBet, 0, ",", "."));
 						<!-- Modal body -->
 						<div class="modal-body row">
 							<div class="col-4 mt-2">
-								<img src="https://countryflagsapi.com/png/<?php /* thanks flag api*/ echo htmlentities($auction['countryCode']); ?>" alt="country flag that is being transfered" id="countryImagePreview" style="width: 100%;" class="rounded shadow">
+								<img crossorigin="anonymous" src="https://countryflagsapi.com/png/<?php /* thanks flag api*/ echo htmlentities($auction['countryCode']); ?>" alt="country flag that is being transfered" id="countryImagePreview" style="width: 100%;" class="rounded shadow">
 							</div>
 							<div class="col-8">
 								<?php if ($lastBet != NULL) { ?>
