@@ -24,8 +24,11 @@ function Islogged($usr)
 }
 
 
+// global used constant
+$countryAcronyms = ["AF", "AO", "AL", "AE", "AR", "AM", "AU", "AT", "AZ", "BI", "BE", "BJ", "BF", "BD", "BG", "BH", "BA", "BY", "BZ", "BO", "BR", "BN", "BT", "BW", "CF", "CA", "CH", "CL", "CN", "CI", "CM", "CD", "CG", "CO", "CR", "CU", "CZ", "DE", "DJ", "DK", "DO", "DZ", "EC", "EG", "ER", "EE", "ET", "FI", "FJ", "GA", "GB", "GE", "GH", "GN", "GM", "GW", "GQ", "GR", "GL", "GT", "GY", "HN", "HR", "HT", "HU", "ID", "IN", "IE", "IR", "IQ", "IS", "IL", "IT", "JM", "JO", "JP", "KZ", "KE", "KG", "KH", "KR", "XK", "KW", "LA", "LB", "LR", "LY", "LK", "LS", "LT", "LU", "LV", "MA", "MD", "MG", "MX", "MK", "ML", "MM", "ME", "MN", "MZ", "MR", "MW", "MY", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NZ", "OM", "PK", "PA", "PE", "PH", "PG", "PL", "KP", "PT", "PY", "PS", "QA", "RO", "RU", "RW", "EH", "SA", "SD", "SS", "SN", "SL", "SV", "RS", "SR", "SK", "SI", "SE", "SZ", "SY", "TD", "TG", "TH", "TJ", "TM", "TL", "TN", "TR", "TW", "TZ", "UG", "UA", "UY", "US", "UZ", "VE", "VN", "VU", "YE", "ZA", "ZM", "ZW", "SO", "GF", "FR", "ES", "AW", "AI", "AD", "AG", "BS", "BM", "BB", "KM", "CV", "KY", "DM", "FK", "FO", "GD", "HK", "KN", "LC", "LI", "MF", "MV", "MT", "MS", "MU", "NC", "NR", "PN", "PR", "PF", "SG", "SB", "ST", "SX", "SC", "TC", "TO", "TT", "VC", "VG", "VI", "CY", "RE", "YT", "MQ", "GP", "CW", "IC"];
 
 
+// Starts main utilities file
 
 function getValue($markid)
 {
@@ -699,8 +702,7 @@ function checkMatch($marketId)
 	}
 
 	if (min($sellPrices) == max($buyPrices)) {
-		echo 'match found';
-		// match	
+		// match found
 		// get index to retrieve the owners
 		$lowestSellIndex = array_search(min($sellPrices), $sellPrices);
 		$highestBuyIndex = array_search(max($buyPrices), $buyPrices);
@@ -710,6 +712,11 @@ function checkMatch($marketId)
 
 		$sellerId = $sellObject['ownerId'];
 		$buyerId = $buyObject['ownerId'];
+
+		if($sellerId == $buyerId){
+			// same user can't buy and sell itself. that would establish the desired price.
+			return;
+		}
 
 		// basic main data
 		$pricePerUnit = $buyObject['pricePerUnit'];
@@ -890,9 +897,9 @@ function isCountryOwned($countryCode)
 
 function getCountryName($countryCode)
 {
+	global $countryAcronyms;
 	$names =  ["Afghanistan", "Angola", "Albania", "United Arab Emirates", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan", "Burundi", "Belgium", "Benin", "Burkina Faso", "Bangladesh", "Bulgaria", "Bahrain", "Bosnia and Herzegovina", "Belarus", "Belize", "Bolivia", "Brazil", "Brunei Darussalam", "Bhutan", "Botswana", "Central African Republic", "Canada", "Switzerland", "Chile", "China", "Côte d'Ivoire", "Cameroon", "Democratic Republic of the Congo", "Republic of Congo", "Colombia", "Costa Rica", "Cuba", "Czech Republic", "Germany", "Djibouti", "Denmark", "Dominican Republic", "Algeria", "Ecuador", "Egypt", "Eritrea", "Estonia", "Ethiopia", "Finland", "Fiji", "Gabon", "United Kingdom", "Georgia", "Ghana", "Guinea", "The Gambia", "Guinea-Bissau", "Equatorial Guinea", "Greece", "Greenland", "Guatemala", "Guyana", "Honduras", "Croatia", "Haiti", "Hungary", "Indonesia", "India", "Ireland", "Iran", "Iraq", "Iceland", "Israel", "Italy", "Jamaica", "Jordan", "Japan", "Kazakhstan", "Kenya", "Kyrgyzstan", "Cambodia", "Republic of Korea", "Kosovo", "Kuwait", "Lao PDR", "Lebanon", "Liberia", "Libya", "Sri Lanka", "Lesotho", "Lithuania", "Luxembourg", "Latvia", "Morocco", "Moldova", "Madagascar", "Mexico", "Macedonia", "Mali", "Myanmar", "Montenegro", "Mongolia", "Mozambique", "Mauritania", "Malawi", "Malaysia", "Namibia", "Niger", "Nigeria", "Nicaragua", "Netherlands", "Norway", "Nepal", "New Zealand", "Oman", "Pakistan", "Panama", "Peru", "Philippines", "Papua New Guinea", "Poland", "Dem. Rep. Korea", "Portugal", "Paraguay", "Palestine", "Qatar", "Romania", "Russia", "Rwanda", "Western Sahara", "Saudi Arabia", "Sudan", "South Sudan", "Senegal", "Sierra Leone", "El Salvador", "Serbia", "Suriname", "Slovakia", "Slovenia", "Sweden", "Swaziland", "Syria", "Chad", "Togo", "Thailand", "Tajikistan", "Turkmenistan", "Timor-Leste", "Tunisia", "Turkey", "Taiwan", "Tanzania", "Uganda", "Ukraine", "Uruguay", "United States", "Uzbekistan", "Venezuela", "Vietnam", "Vanuatu", "Yemen", "South Africa", "Zambia", "Zimbabwe", "Somalia", "France", "France", "Spain", "Aruba", "Anguilla", "Andorra", "Antigua and Barbuda", "Bahamas", "Bermuda", "Barbados", "Comoros", "Cape Verde", "Cayman Islands", "Dominica", "Falkland Islands", "Faeroe Islands", "Grenada", "Hong Kong", "Saint Kitts and Nevis", "Saint Lucia", "Liechtenstein", "Saint Martin (French)", "Maldives", "Malta", "Montserrat", "Mauritius", "New Caledonia", "Nauru", "Pitcairn Islands", "Puerto Rico", "French Polynesia", "Singapore", "Solomon Islands", "São Tomé and Principe", "Saint Martin (Dutch)", "Seychelles", "Turks and Caicos Islands", "Tonga", "Trinidad and Tobago", "Saint Vincent and the Grenadines", "British Virgin Islands", "United States Virgin Islands", "Cyprus", "Reunion (France)", "Mayotte (France)", "Martinique (France)", "Guadeloupe (France)", "Curaco (Netherlands)", "Canary Islands (Spain)"];
-	$acronyms = ["AF", "AO", "AL", "AE", "AR", "AM", "AU", "AT", "AZ", "BI", "BE", "BJ", "BF", "BD", "BG", "BH", "BA", "BY", "BZ", "BO", "BR", "BN", "BT", "BW", "CF", "CA", "CH", "CL", "CN", "CI", "CM", "CD", "CG", "CO", "CR", "CU", "CZ", "DE", "DJ", "DK", "DO", "DZ", "EC", "EG", "ER", "EE", "ET", "FI", "FJ", "GA", "GB", "GE", "GH", "GN", "GM", "GW", "GQ", "GR", "GL", "GT", "GY", "HN", "HR", "HT", "HU", "ID", "IN", "IE", "IR", "IQ", "IS", "IL", "IT", "JM", "JO", "JP", "KZ", "KE", "KG", "KH", "KR", "XK", "KW", "LA", "LB", "LR", "LY", "LK", "LS", "LT", "LU", "LV", "MA", "MD", "MG", "MX", "MK", "ML", "MM", "ME", "MN", "MZ", "MR", "MW", "MY", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NZ", "OM", "PK", "PA", "PE", "PH", "PG", "PL", "KP", "PT", "PY", "PS", "QA", "RO", "RU", "RW", "EH", "SA", "SD", "SS", "SN", "SL", "SV", "RS", "SR", "SK", "SI", "SE", "SZ", "SY", "TD", "TG", "TH", "TJ", "TM", "TL", "TN", "TR", "TW", "TZ", "UG", "UA", "UY", "US", "UZ", "VE", "VN", "VU", "YE", "ZA", "ZM", "ZW", "SO", "GF", "FR", "ES", "AW", "AI", "AD", "AG", "BS", "BM", "BB", "KM", "CV", "KY", "DM", "FK", "FO", "GD", "HK", "KN", "LC", "LI", "MF", "MV", "MT", "MS", "MU", "NC", "NR", "PN", "PR", "PF", "SG", "SB", "ST", "SX", "SC", "TC", "TO", "TT", "VC", "VG", "VI", "CY", "RE", "YT", "MQ", "GP", "CW", "IC"];
-	return $names[array_search($countryCode, $acronyms)];
+	return $names[array_search($countryCode, $countryAcronyms)];
 }
 
 /** 
@@ -969,6 +976,21 @@ function getUserColor($userId)
 }
 
 // auction section 
+function getAllOwnedCountries()
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-map` WHERE ownerId IS NOT NULL";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   [];
+	$selectStmt->execute($input);
+	return $selectStmt->fetchAll();
+}
+
+/** 
+ * Returns the auctions countries
+ * @return array 
+ * @author EncryptEx
+ */
 function getCountriesAuction()
 {
 	global $pdo;
@@ -977,6 +999,33 @@ function getCountriesAuction()
 	$input =   [];
 	$selectStmt->execute($input);
 	return $selectStmt->fetchAll();
+}
+
+/** 
+ * Function that returns the lastest timestamp in which the countryOwners where payed
+ * @return int timestamp
+ * @author EncryptEx
+ */
+function getLastCountryPayAll(){
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-map-passive-income` ORDER BY `timestamp` DESC LIMIT 1";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   [];
+	$selectStmt->execute($input);
+	return $selectStmt->fetchAll()[0];
+}
+
+/** 
+ * Function that saves into db the timestamp given into the passiveIncome process
+ * @return int timestamp
+ * @author EncryptEx
+ */
+function savePayAllRecord(int $timestamp){
+	global $pdo;
+	$SQL_SELECT = "INSERT INTO `market-map-passive-income`(id, timestamp) VALUES (NULL, :timestamp)";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['timestamp'=>$timestamp];
+	return $selectStmt->execute($input);
 }
 
 function doesAuctionExist($countryCode)
@@ -1020,8 +1069,8 @@ function removeAuction($countryCode, $entireVanish = false)
 
 function doesCountryExist($countryCode)
 {
-	$acronyms = ["AF", "AO", "AL", "AE", "AR", "AM", "AU", "AT", "AZ", "BI", "BE", "BJ", "BF", "BD", "BG", "BH", "BA", "BY", "BZ", "BO", "BR", "BN", "BT", "BW", "CF", "CA", "CH", "CL", "CN", "CI", "CM", "CD", "CG", "CO", "CR", "CU", "CZ", "DE", "DJ", "DK", "DO", "DZ", "EC", "EG", "ER", "EE", "ET", "FI", "FJ", "GA", "GB", "GE", "GH", "GN", "GM", "GW", "GQ", "GR", "GL", "GT", "GY", "HN", "HR", "HT", "HU", "ID", "IN", "IE", "IR", "IQ", "IS", "IL", "IT", "JM", "JO", "JP", "KZ", "KE", "KG", "KH", "KR", "XK", "KW", "LA", "LB", "LR", "LY", "LK", "LS", "LT", "LU", "LV", "MA", "MD", "MG", "MX", "MK", "ML", "MM", "ME", "MN", "MZ", "MR", "MW", "MY", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NZ", "OM", "PK", "PA", "PE", "PH", "PG", "PL", "KP", "PT", "PY", "PS", "QA", "RO", "RU", "RW", "EH", "SA", "SD", "SS", "SN", "SL", "SV", "RS", "SR", "SK", "SI", "SE", "SZ", "SY", "TD", "TG", "TH", "TJ", "TM", "TL", "TN", "TR", "TW", "TZ", "UG", "UA", "UY", "US", "UZ", "VE", "VN", "VU", "YE", "ZA", "ZM", "ZW", "SO", "GF", "FR", "ES", "AW", "AI", "AD", "AG", "BS", "BM", "BB", "KM", "CV", "KY", "DM", "FK", "FO", "GD", "HK", "KN", "LC", "LI", "MF", "MV", "MT", "MS", "MU", "NC", "NR", "PN", "PR", "PF", "SG", "SB", "ST", "SX", "SC", "TC", "TO", "TT", "VC", "VG", "VI", "CY", "RE", "YT", "MQ", "GP", "CW", "IC"];
-	return array_search($countryCode, $acronyms);
+	global $countryAcronyms;
+	return array_search($countryCode, $countryAcronyms);
 }
 
 
