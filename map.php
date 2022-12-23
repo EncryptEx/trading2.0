@@ -181,7 +181,7 @@ $userid = $_SESSION['usr'];
 							<img  crossorigin="anonymous" src="" alt="country that is being purchased" id="countryImagePreview" style="width: 100%;" class="rounded shadow">
 						</div>
 						<div class="col-8">
-							You are going to spend a total of <code>$<?php echo htmlentities(number_format($countryBasePrice, 0)); ?></code> to buy the country of <b class="countryName"></b>
+							You are going to spend a total of <code id="basePrice">$<?php echo htmlentities(number_format($countryBasePrice, 0)); ?></code> to buy the country of <b class="countryName"></b>
 							<p class="text-muted">Are you sure?</p>
 						</div>
 					</div>
@@ -200,9 +200,10 @@ $userid = $_SESSION['usr'];
 	</div>
 
 	<script>
-		function confirmBuy(countryCode, countryName) {
+		function confirmBuy(countryCode, countryName, price) {
 			$('#countryImagePreview').attr("src", 'https://countryflagsapi.com/png/' + countryCode); // thanks countryFlagsAPI
 			$('.countryName').text(countryName);
+			$('#basePrice').text("$"+price.toLocaleString('en-US'));
 			$('#countryCodeToBuy').attr("value", countryCode);
 			setTimeout(() => {
 				$('#Modal').modal('show');
