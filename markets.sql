@@ -135,6 +135,12 @@ CREATE TABLE `market-map` (
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
+DROP TABLE IF EXISTS `market-map-passive-income`;
+CREATE TABLE `market-map-passive-income` (
+  `id` int(11) NOT NULL,
+  `timestamp` int(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 --
 -- Table structure for table `market-map-auctions`
