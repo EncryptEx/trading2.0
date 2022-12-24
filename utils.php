@@ -705,7 +705,7 @@ function checkMatch($marketId)
 		array_push($buyPrices, $buyOffer['pricePerUnit']);
 	}
 
-	if (min($sellPrices) == max($buyPrices)) {
+	if (min($sellPrices) == max($buyPrices) || min($sellPrices) < max($buyPrices)) {
 		// match found
 		// get index to retrieve the owners
 		$lowestSellIndex = array_search(min($sellPrices), $sellPrices);
@@ -723,7 +723,7 @@ function checkMatch($marketId)
 		}
 
 		// basic main data
-		$pricePerUnit = $buyObject['pricePerUnit'];
+		$pricePerUnit = $sellObject['pricePerUnit'];
 		$quantityBought = $buyObject['quantity'];
 		$dollarsSpent = $quantityBought * $pricePerUnit;
 
