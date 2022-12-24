@@ -2,6 +2,7 @@
 session_start();
 // script to transfer USD funds to other users
 require 'utils.php';
+Islogged($_SESSION['usr']);
 
 function checkVal($v)
 {
