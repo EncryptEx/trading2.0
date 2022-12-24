@@ -1091,7 +1091,7 @@ function checkAuctionExpiration($countryCode)
 	if ($data['endAuction'] != NULL && $data['endAuction'] <= time()) {
 		$errors = [];
 		$errors[0] = inject($data['ownerId'], 0, $lastBet['bet']);
-		$errors[1] = transferCountryPropery($countryCode, $lastBet['ownerId']);
+		$errors[1] = setCountryOwner($countryCode, $lastBet['ownerId']);
 		$errors[2] = removeAuction($countryCode, TRUE);
 
 		//check for any error
@@ -1108,14 +1108,6 @@ function auctionSetEndTimestmp($countryCode, $userId, $endTtimestamp)
 	$statement = "UPDATE `market-map-auctions` SET endAuction=:endAuction WHERE countryCode=:countryCode AND ownerId=:ownerId LIMIT 1";
 	$preparedstmt = $pdo->prepare($statement);
 	$input = ['countryCode' => $countryCode, 'ownerId' => $userId, 'endAuction' => $endTtimestamp];
-	return $preparedstmt->execute($input);
-}
-function transferCountryPropery($countryCode, $mewUserId)
-{
-	global $pdo;
-	$statement = "UPDATE `market-map` SET ownerId=:ownerId WHERE countryCode=:countryCode LIMIT 1";
-	$preparedstmt = $pdo->prepare($statement);
-	$input = ['countryCode' => $countryCode, 'ownerId' => $mewUserId];
 	return $preparedstmt->execute($input);
 }
 
