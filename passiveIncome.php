@@ -14,18 +14,26 @@ if($_GET['auth'] != $desiredAuthKey){
 
 
 $lastPayAll = getLastCountryPayAll();
-if (time() - $lastPayAll['timestamp'] <= 86400) {
-    // save to db payAll timestamp
-    savePayAllRecord(time());
-
+if($lastPayAll === NULL){
+    $lastTimestamp = 0;
+} else {
+    $lastTimestamp = $lastPayAll['timestamp'];
+}
+if (time() - $lastTimestamp >= 86400) {
+    echo "IM RUNNING";
 	// Pay each user
 	foreach (getAllOwnedCountries() as $ownedCountry) {
         $valueToPay = round(getCountryBasePrice($ownedCountry['countryCode'])/1000,0);
-        // TODO: insert a new way to get funds, not only USD to make more fun the game and introduce criptos in it. 
-        // $marketToPay = $ownedCountry['marketReturn'];
-        // TODO: convert USD to pay to market price. to pay in nº coins
-        $marketToPay = 0;
+        // get random market to pay
+        $markets = getMarkets()->fetchAll();
+        $marketToPay = $markets[random_int(0,count($markets)-1)]['id'];
+        // convert USD to pay to market price. to pay in nº coins
+        $cointsToPay = $valueToPay / getValue($marketToPay);
+        // get owner of recipient
         $recipientId = $ownedCountry['ownerId'];
-        inject($recipientId, $marketToPay, $valueToPay);
+        // pay
+        inject($recipientId, $marketToPay, $cointsToPay);
+        // save log pay action
+        savePayRecord($recipientId, $ownedCountry['countryCode'], $cointsToPay, $marketToPay, time());
     }
 }

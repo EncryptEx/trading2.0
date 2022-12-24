@@ -132,13 +132,19 @@ CREATE TABLE `market-map` (
   `ownerId` int(11) NOT NULL,
   `timestamp` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `market-map-passive-income`;
-CREATE TABLE `market-map-passive-income` (
-  `id` int(11) NOT NULL,
-  `timestamp` int(20) NOT NULL
+DROP TABLE IF EXISTS `market-map-log`;
+CREATE TABLE `market-map-log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `action` int(11) NOT NULL, 
+  `userAffectedId`int(11) NOT NULL,
+  `countryCode` VARCHAR(2) NOT NULL,
+  `quantity` float NOT NULL,
+  `marketId` int(11) NOT NULL,
+  `timestamp` int(20) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

@@ -30,6 +30,10 @@ $countryAcronyms = ["AF", "AO", "AL", "AE", "AR", "AM", "AU", "AT", "AZ", "BI", 
 
 // Starts main utilities file
 
+/** 
+ * Returns the DB row of the market
+ * @return array|int can be 0 if market is not found
+ */
 function getValue($markid)
 {
 	global $pdo;
@@ -1003,28 +1007,33 @@ function getCountriesAuction()
 
 /** 
  * Function that returns the lastest timestamp in which the countryOwners where payed
- * @return int timestamp
+ * @return array|null DB object or null if none
  * @author EncryptEx
  */
 function getLastCountryPayAll(){
 	global $pdo;
-	$SQL_SELECT = "SELECT * FROM `market-map-passive-income` ORDER BY `timestamp` DESC LIMIT 1";
+	$SQL_SELECT = "SELECT * FROM `market-map-log` WHERE `action`=:action ORDER BY `timestamp` DESC LIMIT 1";
 	$selectStmt = $pdo->prepare($SQL_SELECT);
-	$input =   [];
+	// action = 0 stands for passive income actions
+	$input =   ['action' => 0];
 	$selectStmt->execute($input);
-	return $selectStmt->fetchAll()[0];
+	if($selectStmt->rowCount() > 0){
+		return $selectStmt->fetchAll()[0];
+	} else {
+		return NULL;
+	}
 }
 
 /** 
  * Function that saves into db the timestamp given into the passiveIncome process
- * @return int timestamp
+ * @return bool result of DB save action
  * @author EncryptEx
  */
-function savePayAllRecord(int $timestamp){
+function savePayRecord(int $recipientId, string $countryCode, float $quantity, int $marketId, int $timestamp){
 	global $pdo;
-	$SQL_SELECT = "INSERT INTO `market-map-passive-income`(id, timestamp) VALUES (NULL, :timestamp)";
+	$SQL_SELECT = "INSERT INTO `market-map-log`(id, action, userAffectedId, countryCode, quantity, marketId, timestamp) VALUES (NULL, :action, :userAffectedId, :countryCode, :quantity, :marketId, :timestamp)";
 	$selectStmt = $pdo->prepare($SQL_SELECT);
-	$input =   ['timestamp'=>$timestamp];
+	$input =   ['action' => 0, 'userAffectedId' => $recipientId, 'countryCode'=>$countryCode, 'quantity'=>$quantity, 'marketId'=>$marketId, 'timestamp'=>$timestamp];
 	return $selectStmt->execute($input);
 }
 
