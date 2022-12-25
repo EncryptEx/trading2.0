@@ -38,7 +38,9 @@ $fee = $FEE * $coinsSpent;
 $coinsTotal = ($coinsSpent+$fee);
 $canAfford = canAfford($coinsTotal, $_SESSION['usr'], $_POST['marketId']);
 if ($canAfford[0]) { //bol value is [0]
-	$_SESSION['dinoMaxMult'] = getDinoMaxMultiplier();
+	$_SESSION['dinoMaxMilis'] = getdinoMaxMilis();
+	$_SESSION['dinoCoinsSpent'] = $coinsSpent;
+	substract($marketid, $_SESSION['usr'], $coinsTotal);
 	header("location:dinoPlay.php");
 } else {
 	header("location:dino.php?e=25&v=" . $coinsTotal . " " . $marketName);

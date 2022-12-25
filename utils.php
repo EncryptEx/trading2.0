@@ -1261,16 +1261,16 @@ function getCountryBasePrice(string $countryCode) {
 
 }
 
-function getDinoMaxMultiplier(){
+function getdinoMaxMilis(){
 	$randomInt = random_int(0,100);
 	if($randomInt > 95){ // 5%
-		$multiplierMax = random_int(3,20);
+		$milisMax = random_int(3000,20000);
 	} else if ($randomInt > 85){ // 10%
-		$multiplierMax = random_int(2,10);
+		$milisMax = random_int(2000,10000);
 	} else if ($randomInt > 60){ // 25%
-		$multiplierMax = random_int(1,8);
+		$milisMax = random_int(1000,8000);
 	} else { // 60%
-		$multiplierMax = random_int(0,8);
+		$milisMax = random_int(0000,8000);
 	}
-	return $multiplierMax;
+	return $milisMax;
 }
