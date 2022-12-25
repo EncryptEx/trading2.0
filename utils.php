@@ -466,6 +466,15 @@ function RetrieveError($errorid)
 		case 24:
 			$e = "That auction has already ended.";
 			break;
+		case 25: 
+			$e = "You can't aford that! Remember that you have to pay for (coins you introduced+FEE), coins you just needed: ".htmlentities($_GET['v']);
+			break;
+		case 26: 
+			$e = "The market doesn't exist";
+			break;
+		case 27: 
+			$e = "The coins entered can't be 0";
+			break;
 		case 999:
 			$e = "Something went really bad. Please contact an administrator. " . htmlentities($_GET['v']);
 			break;
@@ -1250,4 +1259,18 @@ function getCountryBasePrice(string $countryCode) {
 	return $prices[$countryCode];
 
 
+}
+
+function getDinoMaxMultiplier(){
+	$randomInt = random_int(0,100);
+	if($randomInt > 95){ // 5%
+		$multiplierMax = random_int(3,20);
+	} else if ($randomInt > 85){ // 10%
+		$multiplierMax = random_int(2,10);
+	} else if ($randomInt > 60){ // 25%
+		$multiplierMax = random_int(1,8);
+	} else { // 60%
+		$multiplierMax = random_int(0,8);
+	}
+	return $multiplierMax;
 }
