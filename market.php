@@ -101,6 +101,9 @@ $f = getLogo($marketid);
 			<?php echo $n; ?>
 			<span id="valuee" class="badge badge-primary" style="margin-left:10px;"><?php echo "$" . $v; ?></span>
 			<span id="percentagee" class="badge badge-<?php echo $b; ?>" style="margin-left:10px;"><?php echo $p . "%"; ?></span>
+			<a class="btn btn-light" href="./history.php?marketid=<?php echo htmlentities($marketid);?>"><span class="material-symbols-outlined">
+timeline
+</span></a>
 			<?php if ($o != 0) : ?>
 		</h1>
 		<h3 style="display:inline;">

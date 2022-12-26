@@ -1306,3 +1306,13 @@ function jackpotDeposit($jackpotDeposit, $userId) {
 	$input =   ['ownerId' => $userId, 'quantity' => $jackpotDeposit, 'timestamp' => time()];
 	return $insrtstmnt->execute($input);
 }
+
+/** 
+ * Returns the value of the price of a ticket for the jackpot
+ * @return float|int
+ */
+function getLotteryTicketPrice(){
+	// get value of last jackpot win
+	// if non-last jackpot win (first jackpot), set value to 20
+	return 20;
+}

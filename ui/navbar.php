@@ -10,11 +10,6 @@
 			<li class="nav-item">
 				<a class="nav-link" href="./index.php">Markets</a>
 			</li>
-			<?php if (isset($_GET['marketid']) && !str_starts_with(basename($_SERVER['PHP_SELF'], "php"), "history")) : ?>
-				<li class="nav-item">
-					<a class="nav-link" href="./history.php?marketid=<?php echo htmlentities($_GET['marketid']); ?>"><?php echo getName(base64_decode($_GET['marketid']));?>'s Historical Data</a>
-				</li>
-			<?php endif; ?>
 			<li class="nav-item">
 				<a class="nav-link" href="top.php">Leaderboard</a>
 			</li>
