@@ -2,6 +2,7 @@
 session_start();
 // script to buy countries
 require 'utils.php';
+Islogged($_SESSION['usr']);
 
 function checkVal($v)
 {
