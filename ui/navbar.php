@@ -21,9 +21,9 @@
 			<li class="nav-item">
 				<a class="nav-link" href="airdrop.php">Airdrops</a>
 			</li>
-			<!-- <li class="nav-item">
-				<a class="nav-link" href="mystery.php">Lottery</a>
-			</li> -->
+			<li class="nav-item">
+				<a class="nav-link" href="lottery.php">Lottery</a>
+			</li>
 			<li class="nav-item">
 				<a class="nav-link" href="transfer.php">Transfer</a>
 			</li>
