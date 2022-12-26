@@ -40,6 +40,7 @@ $canAfford = canAfford($coinsTotal, $_SESSION['usr'], $_POST['marketId']);
 if ($canAfford[0]) { //bol value is [0]
 	// establish data that will move throught different files
 	$_SESSION['dinoMaxMilis'] = getdinoMaxMilis();
+	$_SESSION['dinoCanPlay'] = TRUE;
 	$_SESSION['dinoCoinsSpent'] = $coinsSpent;
 	$_SESSION['dinoMarket'] = $_POST['marketId'];
 	// add fee to jackpot

@@ -4,12 +4,12 @@ require 'utils.php';
 Islogged($_SESSION['usr']);
 $userid = $_SESSION['usr'];
 
-if(!isset($_SESSION['dinoMaxMilis']) || $_SESSION['dinoMaxMilis'] == "") {
+if(!isset($_SESSION['dinoMaxMilis']) || !isset($_SESSION['dinoCanPlay']) || $_SESSION['dinoMaxMilis'] == "") {
     header("location:dino.php");
     die();   
 }
 $dinoMaxMilis = $_SESSION['dinoMaxMilis'];
-unset($_SESSION['dinoMaxMilis']);
+unset($_SESSION['dinoCanPlay']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +47,7 @@ unset($_SESSION['dinoMaxMilis']);
                         <h1 id="multiplier" class="maximize"></h1>
                     </div>
                     <div class="col-6 d-none d-sm-inline-block justify-content-center">
-                        <img id="gif" src="./ui/gif/dino.gif" alt="dinosaur running for his life" style="max-width:200px;" width="100%" height="100%">
+                        <img id="gif" src="./ui/gif/dino.gif" alt="dinosaur running for his life" style="max-width:200px;" width="100%" height="auto">
                     </div>
                 </div>
                 

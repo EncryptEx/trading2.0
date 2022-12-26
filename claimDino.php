@@ -26,12 +26,14 @@ $marketVal = getValue($marketIdToInject);
 if($multiplier == 0){
 	// player lost all. depositing all to jackpot
 	jackpotDeposit($coinsSpent*$marketVal, $userid);
+	jackpotDeposit(getJackPotValue()*($_SESSION['dinoMaxMilis']/1000), -1);
 	header("location:dino.php?s=2&v=($". ($newCoins*$marketVal));
 	die();
 	
 }
 unset($_SESSION['dinoCoinsSpent']);
 unset($_SESSION['dinoMarket']);
+unset($_SESSION['dinoMaxMilis']);
 
 inject($userid, $marketIdToInject, $newCoins);
 
