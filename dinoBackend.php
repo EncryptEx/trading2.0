@@ -38,8 +38,13 @@ $fee = $FEE * $coinsSpent;
 $coinsTotal = ($coinsSpent+$fee);
 $canAfford = canAfford($coinsTotal, $_SESSION['usr'], $_POST['marketId']);
 if ($canAfford[0]) { //bol value is [0]
+	// establish data that will move throught different files
 	$_SESSION['dinoMaxMilis'] = getdinoMaxMilis();
 	$_SESSION['dinoCoinsSpent'] = $coinsSpent;
+	$_SESSION['dinoMarket'] = $_POST['marketId'];
+	// add fee to jackpot
+	jackpotDeposit($fee*getValue($marketid), $_SESSION['usr']);
+	// remove funds from user.
 	substract($marketid, $_SESSION['usr'], $coinsTotal);
 	header("location:dinoPlay.php");
 } else {

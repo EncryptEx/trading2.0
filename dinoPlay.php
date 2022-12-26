@@ -9,6 +9,7 @@ if(!isset($_SESSION['dinoMaxMilis']) || $_SESSION['dinoMaxMilis'] == "") {
     die();   
 }
 $dinoMaxMilis = $_SESSION['dinoMaxMilis'];
+unset($_SESSION['dinoMaxMilis']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,6 +52,9 @@ $dinoMaxMilis = $_SESSION['dinoMaxMilis'];
                 </div>
                 
                 <button class="btn btn-danger" onclick="stop()" id="stop">Stop & claim!</button>
+                <form action="claimDino.php" method="POST" id="formSecret">
+                    <input type="hidden" name="m" id="multiplierFI">
+                </form>
             </div>
 	</div>
     <script>
@@ -67,6 +71,7 @@ $dinoMaxMilis = $_SESSION['dinoMaxMilis'];
                 $('#multiplier').addClass("animate__animated animate__backInDown")
                 $('#multiplier').text("You lost everything");    
                 $('#gif').attr("src", "https://media.giphy.com/media/pWdckHaBKYGZHKbxs6/giphy.gif");
+                multiplier = 0;
                 redirect();
                 clearInterval(timer);
                 return;
@@ -85,7 +90,8 @@ $dinoMaxMilis = $_SESSION['dinoMaxMilis'];
         function redirect(){
             
             setTimeout(()=>{
-                window.location.href = "claimDino.php";
+                $('#multiplierFI').val(multiplier);
+                $('#formSecret').submit();
             },2000);
         }
 

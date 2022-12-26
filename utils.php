@@ -1261,6 +1261,10 @@ function getCountryBasePrice(string $countryCode) {
 
 }
 
+/** 
+ * Main function to determine miliseconds where app runs, but in the end is the multiplier
+ * @return int random miliseconds
+ */
 function getdinoMaxMilis(){
 	$randomInt = random_int(0,100);
 	if($randomInt > 95){ // 5%
@@ -1273,4 +1277,32 @@ function getdinoMaxMilis(){
 		$milisMax = random_int(0000,8000);
 	}
 	return $milisMax;
+}
+
+/** 
+ * Retrieve jackpot value, increased by players at the dinoGame
+ * @return float|int
+ */
+function getJackPotValue(){
+	global $pdo;
+	$SQL_SELECT = "SELECT SUM(quantity) FROM `market-dino-jackpot` WHERE lastClaimed IS NULL"; 
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   [];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		return $selectStmt->fetchAll()[0]['SUM(quantity)'];
+	}
+	return false;
+}
+
+/** 
+ * Function to add funds the jackpot.
+ * @return bool true if DB went great.
+ */
+function jackpotDeposit($jackpotDeposit, $userId) {
+	global $pdo;  
+	$SQL_INSERT = "INSERT INTO `market-dino-jackpot` (id, ownerId, quantity, lastClaimed, timestamp) VALUES (NULL, :ownerId, :quantity, NULL, :timestamp)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	$input =   ['ownerId' => $userId, 'quantity' => $jackpotDeposit, 'timestamp' => time()];
+	return $insrtstmnt->execute($input);
 }

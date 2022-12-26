@@ -52,7 +52,12 @@ $userid = $_SESSION['usr'];
 					if ($_GET['s'] == 1) {
 						echo "<div class='alert alert-success alert-dismissible'>
 				<button type='button' class='close' data-dismiss='alert'>&times;</button>
-				<strong>Success!</strong> You have successfully " . htmlentities($_GET['v']) . "</div>";
+				<strong>Congrats!</strong> You have successfully won " . htmlentities($_GET['v']) . "</div>";
+					}
+					if ($_GET['s'] == 2) {
+						echo "<div class='alert alert-danger alert-dismissible'>
+				<button type='button' class='close' data-dismiss='alert'>&times;</button>
+				<strong>Oops!</strong> You have lost: " . htmlentities($_GET['v']) . " in total, that were added to the jackpot as well.</div>";
 					}
 				}
 				?>
