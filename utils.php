@@ -466,6 +466,15 @@ function RetrieveError($errorid)
 		case 24:
 			$e = "That auction has already ended.";
 			break;
+		case 25: 
+			$e = "You can't aford that! Remember that you have to pay for (coins you introduced+FEE), coins you just needed: ".htmlentities($_GET['v']);
+			break;
+		case 26: 
+			$e = "The market doesn't exist";
+			break;
+		case 27: 
+			$e = "The coins entered can't be 0";
+			break;
 		case 999:
 			$e = "Something went really bad. Please contact an administrator. " . htmlentities($_GET['v']);
 			break;
@@ -1250,4 +1259,50 @@ function getCountryBasePrice(string $countryCode) {
 	return $prices[$countryCode];
 
 
+}
+
+/** 
+ * Main function to determine miliseconds where app runs, but in the end is the multiplier
+ * @return int random miliseconds
+ */
+function getdinoMaxMilis(){
+	$randomInt = random_int(0,100);
+	if($randomInt > 95){ // 5%
+		$milisMax = random_int(3000,20000);
+	} else if ($randomInt > 85){ // 10%
+		$milisMax = random_int(2000,10000);
+	} else if ($randomInt > 60){ // 25%
+		$milisMax = random_int(1000,8000);
+	} else { // 60%
+		$milisMax = random_int(0000,8000);
+	}
+	return $milisMax;
+}
+
+/** 
+ * Retrieve jackpot value, increased by players at the dinoGame
+ * @return float|int
+ */
+function getJackPotValue(){
+	global $pdo;
+	$SQL_SELECT = "SELECT SUM(quantity) FROM `market-dino-jackpot` WHERE lastClaimed IS NULL"; 
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   [];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		return $selectStmt->fetchAll()[0]['SUM(quantity)'];
+	}
+	return false;
+}
+
+/** 
+ * Function to add funds the jackpot.
+ * @return bool true if DB went great.
+ */
+function jackpotDeposit($jackpotDeposit, $userId) {
+	global $pdo;  
+	$SQL_INSERT = "INSERT INTO `market-dino-jackpot` (id, ownerId, quantity, lastClaimed, timestamp) VALUES (NULL, :ownerId, :quantity, NULL, :timestamp)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	$input =   ['ownerId' => $userId, 'quantity' => $jackpotDeposit, 'timestamp' => time()];
+	return $insrtstmnt->execute($input);
 }

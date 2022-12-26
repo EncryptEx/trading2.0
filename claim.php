@@ -44,6 +44,7 @@ if ($isNextAirdropReady && $IsAirdrop && !$isExpired && $recaptcha) {
 	$quantity = $airdrop['quantity'];
 	$marketid = $airdrop['marketid'];
 	inject($userid, $marketid, $quantity);
+	jackpotDeposit($quantity, $userid);
 	claimAirdrop($userid);
 } else {
 	header('location:airdrop.php');

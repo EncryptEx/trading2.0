@@ -30,6 +30,9 @@
 			<li class="nav-item">
 				<a class="nav-link" href="map.php">World Map</a>
 			</li>
+			<li class="nav-item">
+				<a class="nav-link" href="dino.php">Dino Game</a>
+			</li>
 			<!-- <li class="nav-item">
 			<a class="nav-link" href="swap.php">Swap</a>
 		</li> -->
