@@ -113,6 +113,10 @@ $userid = $_SESSION['usr'];
 			}
 		</script>
 	</div>
+	<div>
+		<hr>
+		<h3>Jackpot capital: <span>$<?php echo number_format(getJackPotValue()); ?></span></h3>
+	</div>
 </div>
 </body>
 <?php require './ui/footer.php'; ?>

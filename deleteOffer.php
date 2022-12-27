@@ -2,6 +2,7 @@
 session_start();
 // script to buy and sell actions from markets 
 require 'utils.php';
+Islogged($_SESSION['usr']);
 
 function checkVal($v)
 {
