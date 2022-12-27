@@ -54,21 +54,21 @@ $userid = $_SESSION['usr'];
 </head>
 <?php require './../ui/navbar.php'; ?>
 <div class="container" style="margin-top:30px;min-height:50em;">
-    <?php
-    if (isset($_GET['e'])) {
-        echo RetrieveError($_GET['e']);
-    }
-    ?>
+
 
     <h1>Lottery: Win the jackpot! </h1>
     <div class="row">
         <div class="col-sm-12">
-
+            <?php
+            if (isset($_GET['e'])) {
+                echo RetrieveError($_GET['e']);
+            }
+            ?>
             <?php if (isset($_GET['s']) && isset($_GET['v'])) {
                 if ($_GET['s'] == 1) {
                     echo "<div class='alert alert-success alert-dismissible'>
 				<button type='button' class='close' data-dismiss='alert'>&times;</button>
-				<strong>Congrats!</strong> You have successfully bought " . htmlentities($_GET['v']) . "tickets </div>";
+				<strong>Congrats!</strong> You have successfully bought " . htmlentities($_GET['v']) . " ticket/s </div>";
                 }
             }
             ?>
@@ -83,13 +83,25 @@ $userid = $_SESSION['usr'];
 
         <div class="col-12">
             <form action="lotteryBackend.php" method="POST" id="fm">
-                <b>Cost of a single ticket: </b>
-                <h5 id="cost">$0</h5>
+            <div class="row">
+                <div class="col-12 col-sm-6">
+                    <b>Cost of a single ticket: </b>
+                    <h5 id="cost">$0</h5>
+                </div>
+                <?php 
+                $countTickets = getLotteryTicketCount($userid);
+                if($countTickets != false):?>
+                <div class="col-12 col-sm-6">
+                    <b>You aleady own:</b>
+                    <h5><?php echo number_format($countTickets); ?> ticket/s</h5>
+                </div>
+                <?php endif; ?>
+            </div>    
                 <label for="money">I want to buy:</label>
                 <div class="row">
                     <div class="col-8">
                         <div class="input-group mb-3">
-                            <input id="dollars" class="form-control" type="number" value="1" step="1" oninput="updateUsdValue();" required name="coins" min="1">
+                            <input id="dollars" class="form-control" type="number" value="1" step="1" oninput="updateUsdValue();" required name="ntickets" min="1">
                             <div class="input-group-append">
                                 <span class="input-group-text">tickets</span>
                             </div>

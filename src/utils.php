@@ -1316,3 +1316,31 @@ function getLotteryTicketPrice(){
 	// if non-last jackpot win (first jackpot), set value to 20
 	return 20;
 }
+
+/** 
+ * Function to add lottery tickets to a user
+ * @return bool true if DB went great.
+ */
+function buyLotteryTickets($userId, $quantity) {
+	global $pdo;  
+	$SQL_INSERT = "INSERT INTO `market-lottery-tickets` (id, ownerId, quantity, timestamp) VALUES (NULL, :ownerId, :quantity, :timestamp)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	$input =   ['ownerId' => $userId, 'quantity' => $quantity, 'timestamp' => time()];
+	return $insrtstmnt->execute($input);
+}
+
+/** 
+ * Retrieve lottery ticket count of a player
+ * @return float|int
+ */
+function getLotteryTicketCount($userid){
+	global $pdo;
+	$SQL_SELECT = "SELECT SUM(quantity) FROM `market-lottery-tickets` WHERE ownerId=:ownerId"; 
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['ownerId' => $userid];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		return $selectStmt->fetchAll()[0]['SUM(quantity)'];
+	}
+	return false;
+}

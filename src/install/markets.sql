@@ -111,8 +111,6 @@ CREATE TABLE `market-lottery-prizes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userid` int(11) NOT NULL,
   `prize` int(11) NOT NULL,
-  `initialvalue` int(11) NOT NULL,
-  `multiplier` int(11) NOT NULL,
   `timestamp` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -194,6 +192,16 @@ CREATE TABLE `market-dino-jackpot` (
   `timestamp` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+
+
+DROP TABLE IF EXISTS `market-lottery-tickets`;
+CREATE TABLE `market-lottery-tickets` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ownerId` int(11) NOT NULL,
+  `quantity` float NOT NULL,
+  `timestamp` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4;
 
 
 --
