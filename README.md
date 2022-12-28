@@ -33,7 +33,7 @@ This is the second version and public one. The first one didn't use the offer-de
 cd src && mv credentials.example.php credentials.php
 ```
 
-Next, you'll have to add your secret keys as explained inside the credentials.php file.
+Next, you'll have to add your secret keys, as explained inside the credentials.php file.
 
 
 3. Once credentials are correct and saved into the file, you can run the website and access the installation path (let's say your website is example.com, the installation location would be:
@@ -46,12 +46,14 @@ Next, you'll have to add your secret keys as explained inside the credentials.ph
 6. Once everything is ok, you can click the **DELETE INSTALLATION FILE** button to conclude the installation and avoiding anyone to expose your database credentials.
 
 ## Automatizations
-Theese actions need to be preformed automatically and periodically, so I recommend you to use [UptimeRobot](https://uptimerobot.com/).
+These actions need to be preformed automatically and periodically, so I recommend you to use [UptimeRobot](https://uptimerobot.com/).
 
 Regarding the __airdrops__: Make an HTTP request **hourly** to:
+
 ``example.com/genereateAirdrops.php?auth=YourPasswordSavedInCredentialsFile``
 
 Regarding the __passive income country service__: Make an HTTP request **daily** to:
+
 ``example.com/passiveIncome.php?auth=YourPasswordSavedInCredentialsFile``
 
 
