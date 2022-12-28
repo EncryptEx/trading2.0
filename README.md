@@ -1,6 +1,6 @@
 <p align="center"><a href="#"><img src="https://www.iconpacks.net/icons/1/free-bitcoin-icon-798-thumb.png" alt="Coin" height="60"/></a></p>
 <h1 align="center">Tradin'Zone</h1>
-<p align="center">The funniest fake-trading platform for friends.</p>
+<p align="center">The funniest fake-trading platform for friends. Now reversioned.</p>
 <p align="center">
 <img src="https://img.shields.io/github/repo-size/EncryptEx/trading"/>
 <img src="https://img.shields.io/github/languages/top/EncryptEx/trading"/>
@@ -19,16 +19,18 @@ Google Recaptcha, ChartJS, Particles.js, CountryFlags API, SimpleMaps.</p>
 
 ## Story
 
-Have you ever wondered to have a little trading platform in which you could bet with your friends (fake money) and learn some basics of the economy? Well, from the moment where I started thinking that, I decided that I had to code something for us to have fun, and that's where Tradin'Zone comes.</p>
+Have you ever wondered to have a little trading platform in which you could bet with your friends (fake money) and learn some basics of the economy? Well, from the moment where I started thinking that, I decided that I had to code something for us to have fun, and that's where Tradin'Zone comes.
+
+This is the second version and public one. The first one didn't use the offer-demand function basis.
 
 ## Installation
 
 1. First, you'll have to paste the code inside the public folder of your hosting provider.
 
-2. Then you'll have to create the ``credentials.php`` file, you can do it by changing the file name:
+2. Then you'll have to create the ``src/credentials.php`` file, you can do it by changing the file name:
 
 ```sh
-mv credentials.example.php credentials.php
+cd src && mv credentials.example.php credentials.php
 ```
 
 Next, you'll have to add your secret keys as explained inside the credentials.php file.
@@ -43,10 +45,14 @@ Next, you'll have to add your secret keys as explained inside the credentials.ph
 
 6. Once everything is ok, you can click the **DELETE INSTALLATION FILE** button to conclude the installation and avoiding anyone to expose your database credentials.
 
-## Generating new airdrops
+## Automatizations
+Theese actions need to be preformed automatically and periodically, so I recommend you to use [UptimeRobot](https://uptimerobot.com/).
 
-I recommend you to use [UptimeRobot](https://uptimerobot.com/) to call every 1 hour the generation of new airdrops:
+Regarding the __airdrops__: Make an HTTP request **hourly** to:
 ``example.com/genereateAirdrops.php?auth=YourPasswordSavedInCredentialsFile``
+
+Regarding the __passive income country service__: Make an HTTP request **daily** to:
+``example.com/passiveIncome.php?auth=YourPasswordSavedInCredentialsFile``
 
 
 <p align="center"><a href="https://github.com/EncryptEx/trading/"><img src="http://randojs.com/images/barsSmallTransparentBackground.gif" alt="Animated footer bars" width="100%"/></a></p>
