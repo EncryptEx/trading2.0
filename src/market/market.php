@@ -575,7 +575,7 @@ $f = getLogo($marketid);
 
 			});
 
-		}, 1000);
+		}, 30000);
 
 		function addData(chart, label, data) {
 			// removeData(chart);
