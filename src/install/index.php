@@ -7,7 +7,7 @@ if (isset($_GET['delete'])) {
 	die();
 }
 ?>
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 
 <head>
@@ -38,7 +38,7 @@ if (isset($_GET['delete'])) {
 
 
 			If you have checked db credentials you can now start: <br> <br>
-			<form action="index.php?start" method="POST">
+			<form action="/install/index.php?start" method="POST">
 				<div class="form-group required">
 					<label for="username"> Enter your Username (Won't have superpowers) </label>
 					<input type="text" class="form-control text-lowercase" id="username" required="" name="username" placeholder="johnSnow">
