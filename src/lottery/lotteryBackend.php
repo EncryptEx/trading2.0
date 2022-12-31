@@ -22,6 +22,8 @@ $result = canAfford($ticketTotalCost, $userid, 0);
 if ($result[0]) {
     // remove $
     substract(0, $userid, $ticketTotalCost);
+    // add funds inverted into tickets to the jackpot
+    jackpotDeposit($ticketTotalCost, $userid);
     // create db entry of ownership
     buyLotteryTickets($userid, $ticketQ);
 
