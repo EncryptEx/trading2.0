@@ -1367,7 +1367,22 @@ function getLastJackpotWinner(){
 	$input =   [];
 	$selectStmt->execute($input);
 	if ($selectStmt->rowCount() > 0) {
-		return ['result' => true, 'data'=> $selectStmt->fetchAll()[0]];
-	}
-	return ['result' => false];
+        // if installation was ok, it should ALWAYS be at least 1 entry.
+        $data = $selectStmt->fetchAll()[0];
+        if($data['ownerId'] == -1){
+            return ['result' => false, 'data'=> $data];
+        }
+
+		return ['result' => true, 'data'=> $data];
+    }
+	header("location:/index.php?e=999&v=FailToGetLasJackpotWinner:".($selectStmt));
+    die();
+}
+
+function addNewJackpotDeadline(){
+    global $pdo;
+    $SQL_INSERT = "INSERT INTO `market-lottery-prizes` (id, ownerid, prize, timestamp) VALUES (NULL, :ownerid, :prize, :timestamp)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	$input =   ['ownerId' => -1, 'quantity' => 0, 'timestamp' => time()];
+	return $insrtstmnt->execute($input);
 }
