@@ -35,7 +35,7 @@ $f = getLogo($marketid);
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Tradin' Zone</title>
-	<?php require './../meta.php';?>
+	<?php require './../meta.php'; ?>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
@@ -101,9 +101,9 @@ $f = getLogo($marketid);
 			<?php echo $n; ?>
 			<span id="valuee" class="badge badge-primary" style="margin-left:10px;"><?php echo "$" . $v; ?></span>
 			<span id="percentagee" class="badge badge-<?php echo $b; ?>" style="margin-left:10px;"><?php echo $p . "%"; ?></span>
-			<a class="btn btn-light" href="./history.php?marketid=<?php echo htmlentities($_GET['marketid']);?>"><span class="material-symbols-outlined">
-timeline
-</span></a>
+			<a class="btn btn-light" href="./history.php?marketid=<?php echo htmlentities($_GET['marketid']); ?>"><span class="material-symbols-outlined">
+					timeline
+				</span></a>
 			<?php if ($o != 0) : ?>
 		</h1>
 		<h3 style="display:inline;">
@@ -204,6 +204,7 @@ timeline
 						<table class="table table-striped">
 							<thead>
 								<tr>
+									<th>Buyer</th>
 									<th>Quantity</th>
 									<th>Price Per Unit ($)</th>
 									<th>Volume ($)</th>
@@ -214,6 +215,9 @@ timeline
 
 								<?php foreach ($BuyOffers as $offer) : ?>
 									<tr>
+										<td>#<?php $encryptedUser = md5($privKey . $offer['ownerId']);
+												$userLen = strlen($encryptedUser);
+												echo substr($encryptedUser, $userLen - 4, 4); ?></td>
 										<td><?php echo $offer['quantity']; ?></td>
 										<td><?php echo $offer['USD'] / $offer['quantity']; ?></td>
 										<td><?php echo $offer['USD']; ?></td>
@@ -274,6 +278,7 @@ timeline
 						<table class="table table-striped">
 							<thead>
 								<tr>
+									<th>Seller</th>
 									<th>Quantity</th>
 									<th>Price Per Unit ($)</th>
 									<th>Volume ($)</th>
@@ -283,6 +288,9 @@ timeline
 
 								<?php foreach ($SellOffers as $offer) : ?>
 									<tr>
+										<td>#<?php $encryptedUser = md5($privKey . $offer['ownerId']);
+												$userLen = strlen($encryptedUser);
+												echo substr($encryptedUser, $userLen - 4, 4); ?></td>
 										<td><?php echo $offer['quantity']; ?></td>
 										<td><?php echo $offer['USD'] / $offer['quantity']; ?></td>
 										<td><?php echo $offer['USD']; ?></td>
