@@ -1314,6 +1314,18 @@ function jackpotDeposit($jackpotDeposit, $userId) {
 function getLotteryTicketPrice(){
 	// get value of last jackpot win
 	// if non-last jackpot win (first jackpot), set value to 20
+    global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-lottery-prizes` ORDER BY `timestamp` DESC LIMIT 1"; 
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   [];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+        $prize = $selectStmt->fetchAll()[0]['prize'];
+        if($prize != 0){
+		return round($prize/1000000,4);
+    }
+
+	}
 	return 20;
 }
 
@@ -1343,4 +1355,19 @@ function getLotteryTicketCount($userid){
 		return $selectStmt->fetchAll()[0]['SUM(quantity)'];
 	}
 	return false;
+}
+
+/** 
+ * Retrieve all data of lastest jackpot prize won
+ */
+function getLastJackpotWinner(){
+    global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-lottery-prizes` ORDER BY `timestamp` DESC LIMIT 1 "; 
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   [];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		return ['result' => true, 'data'=> $selectStmt->fetchAll()[0]];
+	}
+	return ['result' => false];
 }
