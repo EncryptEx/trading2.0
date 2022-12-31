@@ -88,10 +88,11 @@ $userid = $_SESSION['usr'];
 								};
 
 								function updateUsdValue(){
-									dollars = UsdPrices[document.getElementById('marketSelector').value]*document.getElementById('dollars').value;
-									document.getElementById('fee1').innerHTML = (fee*dollars).toLocaleString("en-US", {'minimumFractionDigits':2,'maximumFractionDigits':2});
+									realDollars = UsdPrices[document.getElementById('marketSelector').value]*document.getElementById('dollars').value;
+                                    var dollars = realDollars - (fee*realDollars);
+									document.getElementById('fee1').innerHTML = (fee*realDollars).toLocaleString("en-US", {'minimumFractionDigits':2,'maximumFractionDigits':2});
 
-									document.getElementById('coinConvers').innerHTML = dollars.toLocaleString("en-US") + " + $" + (fee*dollars).toLocaleString("en-US", {'minimumFractionDigits':2,'maximumFractionDigits':2}) +  " fee";
+									document.getElementById('coinConvers').innerHTML = (realDollars).toLocaleString("en-US")+" = (" + dollars.toLocaleString("en-US") + " + $" + (realDollars*fee).toLocaleString("en-US", {'minimumFractionDigits':2,'maximumFractionDigits':2}) +  " fee)";
 								}
 								updateUsdValue()
 							</script>

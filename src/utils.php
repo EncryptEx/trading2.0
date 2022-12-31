@@ -467,7 +467,7 @@ function RetrieveError($errorid)
 			$e = "That auction has already ended.";
 			break;
 		case 25: 
-			$e = "You can't aford that! Remember that you have to pay for (coins you introduced+FEE), coins you just needed: ".htmlentities($_GET['v']);
+			$e = "You can't aford that! Remember that the fee is included in what you enter (you would be playing with coins-fee), coins you just needed: ".htmlentities($_GET['v']);
 			break;
 		case 26: 
 			$e = "The market doesn't exist";

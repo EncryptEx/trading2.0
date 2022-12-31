@@ -35,13 +35,13 @@ if($coinsSpent == 0 || $coinsSpent == "0") {
 $fee = $FEE * $coinsSpent;
 
 // get full value in dollars to spend
-$coinsTotal = ($coinsSpent+$fee);
+$coinsTotal = ($coinsSpent);
 $canAfford = canAfford($coinsTotal, $_SESSION['usr'], $_POST['marketId']);
 if ($canAfford[0]) { //bol value is [0]
 	// establish data that will move throught different files
 	$_SESSION['dinoMaxMilis'] = getdinoMaxMilis();
 	$_SESSION['dinoCanPlay'] = TRUE;
-	$_SESSION['dinoCoinsSpent'] = $coinsSpent;
+	$_SESSION['dinoCoinsSpent'] = $coinsSpent-$fee;
 	$_SESSION['dinoMarket'] = $_POST['marketId'];
 	// add fee to jackpot
 	jackpotDeposit($fee*getValue($marketid), $_SESSION['usr']);
