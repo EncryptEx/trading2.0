@@ -42,7 +42,7 @@
 					<a class="nav-link" style="color:black;">Total: $<?php echo getBalance($userid); ?></a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="logout.php">Logout</a>
+					<a class="nav-link" href="/logout.php">Logout</a>
 				</li>
 
 			<?php endif; ?>
