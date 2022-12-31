@@ -16,9 +16,6 @@ $sentryKey = '';
 // google ReCaptcha API key
 $captchaSecret = '';
 
-// Coin Market Cap API Key --> to access real market data
-$coinMarketCapKey = '';
-
 // Password that you will need to set to refresh market data
 $desiredAuthKey = '';
 
