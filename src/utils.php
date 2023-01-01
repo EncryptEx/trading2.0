@@ -1285,7 +1285,7 @@ function getdinoMaxMilis(){
  */
 function getJackPotValue(){
 	global $pdo;
-	$SQL_SELECT = "SELECT SUM(quantity) FROM `market-dino-jackpot` WHERE lastClaimed IS NULL"; 
+	$SQL_SELECT = "SELECT SUM(quantity) FROM `market-lottery-value` WHERE lastClaimed IS NULL"; 
 	$selectStmt = $pdo->prepare($SQL_SELECT);
 	$input =   [];
 	$selectStmt->execute($input);
@@ -1301,7 +1301,7 @@ function getJackPotValue(){
  */
 function jackpotDeposit($jackpotDeposit, $userId) {
 	global $pdo;  
-	$SQL_INSERT = "INSERT INTO `market-dino-jackpot` (id, ownerId, quantity, lastClaimed, timestamp) VALUES (NULL, :ownerId, :quantity, NULL, :timestamp)";
+	$SQL_INSERT = "INSERT INTO `market-lottery-value` (id, ownerId, quantity, lastClaimed, timestamp) VALUES (NULL, :ownerId, :quantity, NULL, :timestamp)";
 	$insrtstmnt = $pdo->prepare($SQL_INSERT);
 	$input =   ['ownerId' => $userId, 'quantity' => $jackpotDeposit, 'timestamp' => time()];
 	return $insrtstmnt->execute($input);
@@ -1422,7 +1422,7 @@ function wipeTicketOwnership($timestamp){
  */
 function clearJackpot($timestamp){
     global $pdo;
-	$statement = "UPDATE `market-dino-jackpot` SET lastClaimed=:lastClaimed";
+	$statement = "UPDATE `market-lottery-value` SET lastClaimed=:lastClaimed";
 	$preparedstmt = $pdo->prepare($statement);
     $input = ['lastClaimed' => $timestamp];
 	return $preparedstmt->execute($input);
