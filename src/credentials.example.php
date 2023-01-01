@@ -10,13 +10,10 @@ $privKey = '';
 
 $desiredAuthKey = 'test';
 
-// Your Sentry key --> to track errors
-$sentryKey = '';
-
 // google ReCaptcha API key
 $captchaSecret = '';
 
-// Password that you will need to set to refresh market data
+// Password that you will need to set to do various automated actions
 $desiredAuthKey = '';
 
 $FEE = 0.05;
