@@ -183,8 +183,8 @@ CREATE TABLE `market-map-bets` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS `market-dino-jackpot`;
-CREATE TABLE `market-dino-jackpot` (
+DROP TABLE IF EXISTS `market-lottery-value`;
+CREATE TABLE `market-lottery-value` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ownerId` int(11) NOT NULL,
   `quantity` float NOT NULL,
