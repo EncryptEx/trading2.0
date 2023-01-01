@@ -82,7 +82,7 @@ if (isset($_GET['delete'])) {
 			<br>
 			<b>Started lottery countdown:</b>
 			<?php
-			if (addNewJackpotDeadline()) {
+			if (addGenesisJackpotDeadline()) {
 				echo "Success ✅";
 			} else {
 				echo "Failed ❌. Something went bad.";

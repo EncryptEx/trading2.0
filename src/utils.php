@@ -1369,7 +1369,7 @@ function getLastJackpotWinner(){
 	if ($selectStmt->rowCount() > 0) {
         // if installation was ok, it should ALWAYS be at least 1 entry.
         $data = $selectStmt->fetchAll()[0];
-        if($data['ownerId'] == -1){
+        if($data['userid'] == -1){
             return ['result' => false, 'data'=> $data];
         }
 
@@ -1379,10 +1379,51 @@ function getLastJackpotWinner(){
     die();
 }
 
-function addNewJackpotDeadline(){
+/** 
+ * Creates the genesis of lottery, ran once only on installation.
+ * @return bool true if insert went great.
+ */
+function addGenesisJackpotDeadline(){
     global $pdo;
-    $SQL_INSERT = "INSERT INTO `market-lottery-prizes` (id, ownerid, prize, timestamp) VALUES (NULL, :ownerid, :prize, :timestamp)";
+    $SQL_INSERT = "INSERT INTO `market-lottery-prizes` (id, userid, prize, timestamp) VALUES (NULL, :userid, :prize, :timestamp)";
 	$insrtstmnt = $pdo->prepare($SQL_INSERT);
-	$input =   ['ownerId' => -1, 'quantity' => 0, 'timestamp' => time()];
+	$input =   ['userid' => -1, 'quantity' => 0, 'timestamp' => time()];
 	return $insrtstmnt->execute($input);
+}
+
+
+/** 
+ * Add to db a winner of a lottery
+ * @return bool true if went great the insert to db.
+ */
+function addLotteryWinner($userId, $prize, $timestamp){
+    global $pdo;
+    $SQL_INSERT = "INSERT INTO `market-lottery-prizes` (id, userid, prize, timestamp) VALUES (NULL, :userid, :prize, :timestamp)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	$input =   ['userid' => $userId, 'prize' => $prize, 'timestamp' => $timestamp];
+	return $insrtstmnt->execute($input);
+}
+
+/** 
+ * Remove all tickets from the lottery
+ * @return bool true if the action went great when working with the DB.
+ */
+function wipeTicketOwnership($timestamp){
+    global $pdo;
+    $SQL_DELETE = "DELETE FROM `market-lottery-tickets` WHERE `timestamp` < :timestamp";
+	$deleteStmnt = $pdo->prepare($SQL_DELETE);
+	$input = ['timestamp'=> $timestamp];
+	return $deleteStmnt->execute($input);
+}
+
+/**
+ * Updates all jackpot quantities in order to set them to 0.
+ * @return bool true if the action went great when working with the DB.
+ */
+function clearJackpot($timestamp){
+    global $pdo;
+	$statement = "UPDATE `market-dino-jackpot` SET lastClaimed=:lastClaimed";
+	$preparedstmt = $pdo->prepare($statement);
+    $input = ['lastClaimed' => $timestamp];
+	return $preparedstmt->execute($input);
 }
