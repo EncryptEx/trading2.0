@@ -1387,7 +1387,7 @@ function addGenesisJackpotDeadline(){
     global $pdo;
     $SQL_INSERT = "INSERT INTO `market-lottery-prizes` (id, userid, prize, timestamp) VALUES (NULL, :userid, :prize, :timestamp)";
 	$insrtstmnt = $pdo->prepare($SQL_INSERT);
-	$input =   ['userid' => -1, 'quantity' => 0, 'timestamp' => time()];
+	$input =   ['userid' => -1, 'prize' => 0, 'timestamp' => time()];
 	return $insrtstmnt->execute($input);
 }
 
