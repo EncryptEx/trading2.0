@@ -79,6 +79,15 @@ if (isset($_GET['delete'])) {
 				echo "Failed ❌. A user is already created";
 			}
 			?>
+			<br>
+			<b>Started lottery countdown:</b>
+			<?php
+			if (addGenesisJackpotDeadline()) {
+				echo "Success ✅";
+			} else {
+				echo "Failed ❌. Something went bad.";
+			}
+			?>
 			<h4>Now you can delete this file to prevent cybersec incidents.</h4>
 			<a href="./?delete" class="btn btn-danger">DELETE INSTALLATION FILE</a>
 		<?php endif; ?>
