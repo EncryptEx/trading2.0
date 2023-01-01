@@ -46,7 +46,6 @@ $userid = $_SESSION['usr'];
 					// Fee manager
 
 					var fee = <?php echo htmlentities($FEE); ?>;
-
 				</script>
 				<?php if (isset($_GET['s']) && isset($_GET['v'])) {
 					if ($_GET['s'] == 1) {
@@ -61,6 +60,18 @@ $userid = $_SESSION['usr'];
 					}
 				}
 				?>
+
+				<button data-toggle="collapse" data-target="#explanation" class="btn btn-light">
+					<i class="far fa-info-circle"></i>
+					How to play?</button><br>
+
+				<div id="explanation" class="collapse">
+					<hr>
+					<p>
+						The game is simple: there will be a multiplier that will increase constantly, but at some point the dinosaur will be crashed by a meteorite, which will result in your total failure and lost of everything you had bet. if you manage to stop & claim before the dino dies, your multiplier will be aplied to the coins you entered.
+					</p>
+				</div>
+				<hr>
 				<form action="dinoBackend.php" method="POST" id="fm">
 
 					<label for="money">I want to play with:</label>
@@ -83,16 +94,22 @@ $userid = $_SESSION['usr'];
 								// Start coin convert
 								var UsdPrices = {
 									<?php foreach (getMarkets() as $markets) {
-											echo $markets['id'] . ": " . getValue($markets['id']) . ",";
-										} ?>
+										echo $markets['id'] . ": " . getValue($markets['id']) . ",";
+									} ?>
 								};
 
-								function updateUsdValue(){
-									realDollars = UsdPrices[document.getElementById('marketSelector').value]*document.getElementById('dollars').value;
-                                    var dollars = realDollars - (fee*realDollars);
-									document.getElementById('fee1').innerHTML = (fee*realDollars).toLocaleString("en-US", {'minimumFractionDigits':2,'maximumFractionDigits':2});
+								function updateUsdValue() {
+									realDollars = UsdPrices[document.getElementById('marketSelector').value] * document.getElementById('dollars').value;
+									var dollars = realDollars - (fee * realDollars);
+									document.getElementById('fee1').innerHTML = (fee * realDollars).toLocaleString("en-US", {
+										'minimumFractionDigits': 2,
+										'maximumFractionDigits': 2
+									});
 
-									document.getElementById('coinConvers').innerHTML = (realDollars).toLocaleString("en-US")+" = (" + dollars.toLocaleString("en-US") + " + $" + (realDollars*fee).toLocaleString("en-US", {'minimumFractionDigits':2,'maximumFractionDigits':2}) +  " fee)";
+									document.getElementById('coinConvers').innerHTML = (realDollars).toLocaleString("en-US") + " = (" + dollars.toLocaleString("en-US") + " + $" + (realDollars * fee).toLocaleString("en-US", {
+										'minimumFractionDigits': 2,
+										'maximumFractionDigits': 2
+									}) + " fee)";
 								}
 								updateUsdValue()
 							</script>

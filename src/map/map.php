@@ -39,7 +39,7 @@ $userid = $_SESSION['usr'];
 	<div class="row">
 		<div class="col-sm-12">
 			<h1>Conquer the world</h1>
-			<p class="text-muted">Buy a country with USD by clicking it. All countries pay in random crypocurrencies every day</p>
+			<p class="text-muted">Buy a country with USD by clicking it. All owned countries pay in random crypocurrencies every day</p>
 			<?php if (isset($_GET['s']) && isset($_GET['v'])) {
 				if ($_GET['s'] == 1) {
 					echo "<div class='alert alert-success alert-dismissible'>
