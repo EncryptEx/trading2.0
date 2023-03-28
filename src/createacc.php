@@ -27,7 +27,11 @@ if(strlen($usernm) > 20 || strlen($name) > 20) {
 
 if (!doesExistUser($usernm)) {
 	$userid = CreateUser($usernm, $name, $passwd, 1);
-	addition($userid, 0, 1000);
+	// add $1000 worth of random crypto
+	$markets = getMarkets()->fetchAll();
+	$randomVal = random_int(0,count($markets));
+	$mktId = $markets[$randomVal]['id'];
+	addition($userid, $mktId, 1000/getValue($mktId));
 
 } else {
 	header('location:register.php?e=13'); // not correct 
