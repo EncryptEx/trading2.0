@@ -29,6 +29,7 @@ if ((isset($uri[2]) && $uri[2] == 'market') && isset($uri[3]) && $uri[3] != 'all
         }
     }
     echo json_encode(['error'=>TRUE, 'message'=>'Market not found']);
+    header("HTTP/1.1 404 Not Found");
     exit();
 
 }
@@ -40,6 +41,39 @@ if ((isset($uri[2]) && $uri[2] == 'stats') && isset($uri[3]) && $uri[3] == 'aird
         echo json_encode(['topAirdrop'=>$topAirdrop[1]]);
     } else {
         echo json_encode(['error'=>TRUE, 'message'=>'Market no airdrops claimed so far']);
+        header("HTTP/1.1 404 Not Found");
+    }
+    exit();
+
+}
+
+// /api/user/all
+if ((isset($uri[2]) && $uri[2] == 'user') && isset($uri[3]) && $uri[3] == 'all') {
+    $final = [];
+    $users = getUserIDs()->fetchAll();
+    foreach ($users as $user) {
+        array_push($final, ['username'=> $user['username'], 'name'=> $user['name'], 'balance'=>getBalance($user['id'])]);
+    }
+    header("HTTP/1.1 404 Not Found");
+    echo json_encode($final);
+    exit();
+
+}
+// /api/user/{username}
+if ((isset($uri[2]) && $uri[2] == 'user') && isset($uri[3]) && $uri[3] != 'all') {
+    $usernameToCheck = $uri[3];
+    $id = getIdFromUserName($usernameToCheck);
+    if($id != false && is_numeric($id)){
+        echo json_encode(
+            [
+                'username'=> htmlentities($usernameToCheck),
+                'name'=> getUserName($id),
+                "balance" => getBalance($id),
+            ]
+            );
+    } else {
+        header("HTTP/1.1 404 Not Found");
+        echo json_encode(['error'=>TRUE, 'message'=>'User not found']);
     }
     exit();
 
