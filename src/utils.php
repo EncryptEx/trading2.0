@@ -318,14 +318,15 @@ function getTopAirdropClaim()
 	if ($selectStmt->rowCount() > 0) {
 		// array_push($total, $row['value']);
 		foreach ($selectStmt as $row) {
+			if($row['MAX(`quantity`)'] == null){return [false];}
 			// array_push($prices, $row['marketid'], $row['value']);
 			return [true, $row['MAX(`quantity`)']];
 		}
-		return [false];
 		// $value = max($prices);
 		// return [$value,array_search($value, $prices)];
 		// return $prices;
 	}
+	return [false];
 }
 
 

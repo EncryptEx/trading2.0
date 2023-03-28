@@ -19,7 +19,7 @@ if ((isset($uri[2]) && $uri[2] == 'market') && isset($uri[3]) && $uri[3] == 'all
 }
 
 // /api/market/{id}
-if ((isset($uri[2]) && $uri[2] == 'market') && isset($uri[3]) && $uri[3] != 'all') {
+if ((isset($uri[2]) && $uri[2] == 'market') && isset($uri[3]) && $uri[3] != 'all' && is_numeric($uri[3])) {
     $requestedID = $uri[3];
     $preMarkets = getMarkets()->fetchAll();
     foreach ($preMarkets as $market) {
@@ -29,6 +29,18 @@ if ((isset($uri[2]) && $uri[2] == 'market') && isset($uri[3]) && $uri[3] != 'all
         }
     }
     echo json_encode(['error'=>TRUE, 'message'=>'Market not found']);
+    exit();
+
+}
+
+// /api/stats/airdop
+if ((isset($uri[2]) && $uri[2] == 'stats') && isset($uri[3]) && $uri[3] == 'airdrop') {
+    $topAirdrop = getTopAirdropClaim();
+    if($topAirdrop[0]){
+        echo json_encode(['topAirdrop'=>$topAirdrop[1]]);
+    } else {
+        echo json_encode(['error'=>TRUE, 'message'=>'Market no airdrops claimed so far']);
+    }
     exit();
 
 }
