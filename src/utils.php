@@ -282,6 +282,23 @@ function getUserIDs()
 	}
 	return false;
 }
+
+/**
+ * Retrieves the user ID from a username. 
+ * @return string|bool false when none found, 
+ */
+function getIdFromUserName(string $username)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT id FROM `market-users` WHERE username=:username";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input =   ['username' => $username];
+	$selectStmt->execute($input);
+	if ($selectStmt->rowCount() > 0) {
+		return $selectStmt->fetchAll()[0]['id'];
+	}
+	return false;
+}
 function getTopMarket()
 {
 	global $pdo;
@@ -318,14 +335,15 @@ function getTopAirdropClaim()
 	if ($selectStmt->rowCount() > 0) {
 		// array_push($total, $row['value']);
 		foreach ($selectStmt as $row) {
+			if($row['MAX(`quantity`)'] == null){return [false];}
 			// array_push($prices, $row['marketid'], $row['value']);
 			return [true, $row['MAX(`quantity`)']];
 		}
-		return [false];
 		// $value = max($prices);
 		// return [$value,array_search($value, $prices)];
 		// return $prices;
 	}
+	return [false];
 }
 
 

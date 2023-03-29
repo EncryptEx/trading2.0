@@ -25,7 +25,7 @@ if(strlen($usernm) > 20 || strlen($name) > 20) {
 	die();
 }
 
-if (!doesExistUser($usernm)) {
+if (!doesExistUser($usernm) && $usernm != "all" && $usernm != "list") { // avoid all,list since it is used as keywords in api
 	$userid = CreateUser($usernm, $name, $passwd, 1);
 	// add $1000 worth of random crypto
 	$markets = getMarkets()->fetchAll();
