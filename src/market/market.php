@@ -135,7 +135,7 @@ $f = getLogo($marketid);
 					</div>
 					<label for="coins">For this much:</label>
 					<div class="input-group mb-3">
-						<input id="coins" class="form-control" type="number" placeholder="1" step="any" onchange="updateVal();" required name="coins">
+						<input id="coins" class="form-control" type="number" placeholder="1" step="any" onchange="updateVal();" required name="coins" value="1">
 						<div class="input-group-append">
 							<span class="input-group-text"><?php echo $n . "/s"; ?></span>
 						</div>
@@ -145,7 +145,7 @@ $f = getLogo($marketid);
 						<div class="input-group-prepend">
 							<span class="input-group-text">$</span>
 						</div>
-						<input id="money2" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" name="money" min="0.01" disabled>
+						<input id="money2" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" name="money" min="0.01" onchange="updateEq(this.value);">
 						<div class="input-group-append">
 							<span class="input-group-text">/<?php echo $n; ?></span>
 						</div>
@@ -170,7 +170,7 @@ $f = getLogo($marketid);
 					</div>
 					<label for="coinsSell">For this much:</label>
 					<div class="input-group mb-3">
-						<input id="coinsSell" class="form-control" type="number" placeholder="1" step="any" onchange="updateValSell();" required name="coins">
+						<input id="coinsSell" class="form-control" type="number" placeholder="1" step="any" onchange="updateValSell();" required name="coins" value="1">
 						<div class="input-group-append">
 							<span class="input-group-text"><?php echo $n . "/s"; ?></span>
 						</div>
@@ -180,7 +180,7 @@ $f = getLogo($marketid);
 						<div class="input-group-prepend">
 							<span class="input-group-text">$</span>
 						</div>
-						<input id="moneyPPU" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" name="money" min="0.01" disabled>
+						<input id="moneyPPU" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" name="money" min="0.01" onchange="updateEq2(this.value)">
 						<div class="input-group-append">
 							<span class="input-group-text">/<?php echo $n; ?></span>
 						</div>
@@ -446,6 +446,20 @@ $f = getLogo($marketid);
 			var pricePerUnit = document.getElementById('money2');
 
 			pricePerUnit.value = dollars.value / coins.value;
+		}
+
+		function updateEq(valueperCoin){
+			var dollars = document.getElementById('money');
+			var coins = document.getElementById('coins');
+			
+			dollars.value = coins.value * valueperCoin;
+		}
+		
+		function updateEq2(valueperCoin){
+			var dollars = document.getElementById('money');
+			var coins = document.getElementById('coins');
+			
+			dollars.value = coins.value * valueperCoin;
 		}
 
 
