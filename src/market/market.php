@@ -219,8 +219,8 @@ $f = getLogo($marketid);
 												$userLen = strlen($encryptedUser);
 												echo substr($encryptedUser, $userLen - 4, 4); ?></td>
 										<td><?php echo $offer['quantity']; ?></td>
-										<td><?php echo $offer['USD'] / $offer['quantity']; ?></td>
 										<td><?php echo $offer['USD']; ?></td>
+										<td><?php echo $offer['USD'] * $offer['quantity']; ?></td>
 										<td>
 											<?php if ($offer['ownerId'] == $userid) : ?>
 
@@ -292,8 +292,8 @@ $f = getLogo($marketid);
 												$userLen = strlen($encryptedUser);
 												echo substr($encryptedUser, $userLen - 4, 4); ?></td>
 										<td><?php echo $offer['quantity']; ?></td>
-										<td><?php echo $offer['USD'] / $offer['quantity']; ?></td>
 										<td><?php echo $offer['USD']; ?></td>
+										<td><?php echo $offer['USD'] * $offer['quantity']; ?></td>
 										<td>
 											<?php if ($offer['ownerId'] == $userid) : ?>
 

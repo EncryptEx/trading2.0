@@ -45,23 +45,25 @@ if ($_GET['m'] == 1) {
 	// $fee = 0.001 * getValue($toID);
 	//buy fee but a little fee.
 
-	
 	$canAfford = canAfford($moneySpent, $userid, 0);
 	if ($canAfford[0]) { //bool value is [0]
-		
+
 		// $quantity = $moneySpent;
 		// if ($fee >= $quantity) {
-			// 	header("location:market.php?marketid=" . $_POST['referrer'] . "&e=4");
-			// 	die();
+		// 	header("location:market.php?marketid=" . $_POST['referrer'] . "&e=4");
+		// 	die();
 		// }
 		$dollars = $_POST['money'];
 		$coins = $_POST['coins'];
-		if(!is_numeric($dollars) || !is_numeric($coins)) {
+		if (!is_numeric($dollars) || !is_numeric($coins)) {
 			header("location:market.php?marketid=" . $_POST['referrer'] . "&e=12");
 			die();
-		} 
+		}
+		
+		
 		$pricePerUnit = $dollars / $coins;
 		
+
 		// create buy offer
 		$offerResult = newOffer("BUY", $userid, $marketId, $coins, $dollars, $pricePerUnit);
 		// remove quantity from USD wallet
@@ -92,16 +94,16 @@ if ($_GET['m'] == 1) {
 	// }
 	$hasMoney = canAfford($coins, $userid, $marketId);
 	if ($hasMoney[0]) {
-		if(!is_numeric($dollars) || !is_numeric($coins)) {
+		if (!is_numeric($dollars) || !is_numeric($coins)) {
 			header("location:market.php?marketid=" . $_POST['referrer'] . "&e=12");
 			die();
-		} 
+		}
 		$pricePerUnit = $dollars / $coins;
 
 		$result = newOffer("SELL", $userid, $marketId, $coins, $dollars, $pricePerUnit);
 		substract($marketId, $userid, $coins);
 		if ($result) {
-			header("location:market.php?marketid=" . $_POST['referrer'] . "&sell=true&s=2&v=" . (round($_POST['coins'], 10)) . "&v2=" . (round($dollars, 10)). "&v3=" . (round($pricePerUnit, 10)));
+			header("location:market.php?marketid=" . $_POST['referrer'] . "&sell=true&s=2&v=" . (round($_POST['coins'], 10)) . "&v2=" . (round($dollars, 10)) . "&v3=" . (round($pricePerUnit, 10)));
 		} else {
 			header("location:market.php?marketid=" . $_POST['referrer'] . "&e=16");
 		}
