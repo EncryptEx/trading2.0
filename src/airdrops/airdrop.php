@@ -31,7 +31,7 @@ if ($airdrop['status']) {
 	<title>Tradin' Zone</title>
 	<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 	<?php require './../meta.php';?>
-	<link rel="stylesheet" href="./ui/golden-btn.css">
+	<link rel="stylesheet" href="./../ui/golden-btn.css">
 </head>
 <?php require './../ui/navbar.php'; ?>
 <div class="container" style="margin-top:30px; height:60em;">
