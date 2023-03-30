@@ -29,7 +29,7 @@ if (!doesExistUser($usernm) && $usernm != "all" && $usernm != "list") { // avoid
 	$userid = CreateUser($usernm, $name, $passwd, 1);
 	// add $1000 worth of random crypto
 	$markets = getMarkets()->fetchAll();
-	$randomVal = random_int(0,count($markets));
+	$randomVal = random_int(0,count($markets)-1);
 	$mktId = $markets[$randomVal]['id'];
 	addition($userid, $mktId, 1000/getValue($mktId));
 
