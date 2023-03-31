@@ -140,7 +140,7 @@ $userid = $_SESSION['usr'];
 								<div class="row">
 									<div class="col-4 col-sm-2 col-xl-1">
 										<div class="d-block my-2">
-											<img class="flagIconrounded img-fluid shadow-sm" crossorigin="anonymous" src="https://countryflagsapi.com/png/<?php /* thanks flag api*/ echo htmlentities($auction['countryCode']); ?>" alt="">
+											<img class="flagIconrounded img-fluid shadow-sm" crossorigin="anonymous" src="./../ui/flags/<?php  echo htmlentities(strtolower($auction['countryCode'])); ?>.png" alt="">
 										</div>
 									</div>
 									<div class="col-8 col-sm-10 col-xl-11">
@@ -201,7 +201,7 @@ $userid = $_SESSION['usr'];
 
 	<script>
 		function confirmBuy(countryCode, countryName, price) {
-			$('#countryImagePreview').attr("src", 'https://countryflagsapi.com/png/' + countryCode); // thanks countryFlagsAPI
+			$('#countryImagePreview').attr("src", './../ui/flags/' + countryCode.toLowerCase() + '.png');
 			$('.countryName').text(countryName);
 			$('#basePrice').text("$"+price.toLocaleString('en-US'));
 			$('#countryCodeToBuy').attr("value", countryCode);

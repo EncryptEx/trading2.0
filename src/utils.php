@@ -4,7 +4,7 @@
 //
 require 'credentials.php';
 
-// error_reporting(~E_ALL);
+error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 
 
 // Start DB
