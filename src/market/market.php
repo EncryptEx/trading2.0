@@ -456,8 +456,8 @@ $f = getLogo($marketid);
 		}
 		
 		function updateEq2(valueperCoin){
-			var dollars = document.getElementById('money');
-			var coins = document.getElementById('coins');
+			var dollars = document.getElementById('moneySell');
+			var coins = document.getElementById('coinsSell');
 			
 			dollars.value = coins.value * valueperCoin;
 		}

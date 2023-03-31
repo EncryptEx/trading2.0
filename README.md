@@ -15,7 +15,7 @@ Project designed using PHP, SQL, JS, CSS, HTML.
 Used Bootstrap 4 framework. Migration to BS5 TBD.
 
 Also used some tools:
-Google Recaptcha, ChartJS, Particles.js, CountryFlags API, SimpleMaps.</p>
+Google Recaptcha, ChartJS, Particles.js, CountryFlags API (deprecated, now using it self-hosted), SimpleMaps.</p>
 
 ## Story
 
