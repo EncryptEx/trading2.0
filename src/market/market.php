@@ -145,7 +145,7 @@ $f = getLogo($marketid);
 						<div class="input-group-prepend">
 							<span class="input-group-text">$</span>
 						</div>
-						<input id="money2" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" name="money" min="0.01" onchange="updateEq(this.value);">
+						<input id="money2" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" name="ppumoney" min="0.01" onchange="updateEq(this.value);">
 						<div class="input-group-append">
 							<span class="input-group-text">/<?php echo $n; ?></span>
 						</div>
@@ -180,7 +180,7 @@ $f = getLogo($marketid);
 						<div class="input-group-prepend">
 							<span class="input-group-text">$</span>
 						</div>
-						<input id="moneyPPU" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" name="money" min="0.01" onchange="updateEq2(this.value)">
+						<input id="moneyPPU" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" name="ppumoney" min="0.01" onchange="updateEq2(this.value)">
 						<div class="input-group-append">
 							<span class="input-group-text">/<?php echo $n; ?></span>
 						</div>
@@ -219,8 +219,8 @@ $f = getLogo($marketid);
 												$userLen = strlen($encryptedUser);
 												echo substr($encryptedUser, $userLen - 4, 4); ?></td>
 										<td><?php echo $offer['quantity']; ?></td>
+										<td><?php echo $offer['USD'] / $offer['quantity']; ?></td>
 										<td><?php echo $offer['USD']; ?></td>
-										<td><?php echo $offer['USD'] * $offer['quantity']; ?></td>
 										<td>
 											<?php if ($offer['ownerId'] == $userid) : ?>
 
@@ -292,8 +292,8 @@ $f = getLogo($marketid);
 												$userLen = strlen($encryptedUser);
 												echo substr($encryptedUser, $userLen - 4, 4); ?></td>
 										<td><?php echo $offer['quantity']; ?></td>
+										<td><?php echo $offer['USD'] / $offer['quantity']; ?></td>
 										<td><?php echo $offer['USD']; ?></td>
-										<td><?php echo $offer['USD'] * $offer['quantity']; ?></td>
 										<td>
 											<?php if ($offer['ownerId'] == $userid) : ?>
 
