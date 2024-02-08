@@ -62,7 +62,7 @@ $userid = $_SESSION['usr'];
 				?>
 
 				<button data-toggle="collapse" data-target="#explanation" class="btn btn-light">
-					<i class="far fa-info-circle"></i>
+					<i class="fa-solid fa-circle-info"></i>
 					How to play?</button><br>
 
 				<div id="explanation" class="collapse">
