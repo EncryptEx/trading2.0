@@ -904,6 +904,16 @@ function insertValue($markid, $value)
 	$insrtstmnt->execute($input);
 }
 
+function insertPercentages($markid, $ph, $pd, $pw, $pm, $p2m, $p3m, $marketcap)
+{
+	global $pdo;
+
+	$SQL_INSERT = "INSERT INTO `market-percentages` (id, marketid, ph, pd, pw, pm, p2m, p3m, marketcap) VALUES (NULL, :marketid, :ph, :pd, :pw, :pm, :p2m, :p3m, :marketcap)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	$input = ['marketid' => $markid, 'ph' => $ph, 'pd' => $pd, 'pw' => $pw, 'pm' => $pm, 'p2m' => $p2m, 'p3m' => $p3m, 'marketcap' => $marketcap];
+	$insrtstmnt->execute($input);
+}
+
 function getAllTransactions($marketId)
 {
 	global $pdo;
@@ -1357,7 +1367,7 @@ function getLotteryTicketPrice(){
  */
 function buyLotteryTickets($userId, $quantity) {
 	global $pdo;  
-	$SQL_INSERT = "INSERT INTO `market-lottery-tickets` (id, ownerId, quantity, timestamp) VALUES (NULL, :ownerId, :quantity, :timestamp)";
+	$SQL_º = "INSERT INTO `market-lottery-tickets` (id, ownerId, quantity, timestamp) VALUES (NULL, :ownerId, :quantity, :timestamp)";
 	$insrtstmnt = $pdo->prepare($SQL_INSERT);
 	$input =   ['ownerId' => $userId, 'quantity' => $quantity, 'timestamp' => time()];
 	return $insrtstmnt->execute($input);

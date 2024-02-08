@@ -37,7 +37,7 @@ if ($selectStmt->rowCount() > 0) {
 			insertValue($row['id'],$newValue);
 
 			echo "Generated value for ".$row['name']." with id ".$row['id']."new value: ".$newValue."<br>";
-
+			
 		} else if ($row['isReal'] == 1 && $wantsReal) {
 			// https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest
 			$url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest';
@@ -45,15 +45,15 @@ if ($selectStmt->rowCount() > 0) {
 				'id' => $row['url'],
 				'convert' => 'USD'
 			];
-
+			
 			$headers = [
 				'Accepts: application/json',
 				'X-CMC_PRO_API_KEY: '.$coinMarketCapKey,
 			];
 			$qs = http_build_query($parameters); // query string encode the parameters
 			$request = "{$url}?{$qs}"; // create the request URL
-
-
+			
+			
 			$curl = curl_init(); // Get cURL resource
 			// Set cURL options
 			curl_setopt_array($curl, array(
@@ -61,10 +61,10 @@ if ($selectStmt->rowCount() > 0) {
 				CURLOPT_HTTPHEADER => $headers,     // set the headers 
 				CURLOPT_RETURNTRANSFER => 1         // ask for raw response instead of bool
 			));
-
+			
 			$response = curl_exec($curl); // Send the request, save the response
 			$result = json_decode($response, true); // print json decoded response
-
+			
 			if ($result['status']['error_code'] == 0) {
 				$price = $result['data'][$row['url']]['quote']['USD']['price'];
 				$ph = $result['data'][$row['url']]['quote']['USD']['percent_change_1h'];
@@ -75,6 +75,8 @@ if ($selectStmt->rowCount() > 0) {
 				$p3m = $result['data'][$row['url']]['quote']['USD']['percent_change_90d'];
 				$marketcap = $result['data'][$row['url']]['quote']['USD']['market_cap'];
 				insertValue($row['id'], $price);
+				echo "Read value for ".$row['name']." with id ".$row['id']."new value: ".$price."<br>";
+
 				insertPercentages($row['id'], $ph, $pd, $pw, $pm, $p2m, $p3m, $marketcap);
 			} else {
 				header("HTTP/1.1 500 Internal Server Error");
