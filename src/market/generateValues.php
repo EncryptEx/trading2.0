@@ -36,7 +36,7 @@ if ($selectStmt->rowCount() > 0) {
 
 			insertValue($row['id'],$newValue);
 
-			echo "Generated value for ".$row['name']." with id ".$row['id']."new value: ".$newValue."\n";
+			echo "Generated value for ".$row['name']." with id ".$row['id']."new value: ".$newValue."<br>";
 
 		} else if ($row['isReal'] == 1 && $wantsReal) {
 			// https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest
