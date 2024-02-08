@@ -516,7 +516,7 @@ function canAfford($quantity, $userid, $marketid)
 
 	if ($selectStmt->rowCount() > 0) {
 		foreach ($selectStmt as $row) {
-			if (floatval($row['quantity']) >= floatval($quantity)) { // if money USD > SOMETHING then OK
+			if (bcdiv(floatval($row['quantity']),1,8) >= bcdiv(floatval($quantity), 1, 8)) { // if money USD > SOMETHING then OK
 				return [true, $row['quantity']];
 			} else {
 				return [false, $row['quantity'], floatval($quantity)];
@@ -553,12 +553,13 @@ function substract($marketid, $ownerid, $quantityInCoins)
 			$statement = "UPDATE `market-balances` SET quantity=:quantity WHERE ownerid=:ownerid AND marketid=:marketid";
 			$preparedstmt = $pdo->prepare($statement);
 			$input =   ['quantity' => $newQ, 'ownerid' => $ownerid, 'marketid' => $marketid];
-			$preparedstmt->execute($input);
+			$res = $preparedstmt->execute($input);
 
 			if (isset($error)) {
-				header("location:index.php?e=999&v=" . $error);
+				header("location:./../index.php?e&v=" . $error);
 				die();
 			}
+			return $res;
 		}
 	}
 }
@@ -684,19 +685,22 @@ function decrypt($data)
 }
 
 
-function newOffer($type, $userId, $marketId, $coins, $offerUSD, $PPU)
+function exchange($fromID, $toID, $fee, $userid, $quantityInDollars)
 {
-	if ($type == "BUY") {
-		$encType = 0;
-	} else if ($type == "SELL") {
-		$encType = 1;
-	} else {
-		throw new Error("Offer type unknown");
-	}
 	global $pdo;
-	$SQL_INSERT = "INSERT INTO `market-offers` (id, ownerId, type, marketId, quantity, USD, pricePerUnit) VALUES (NULL, :ownerId, :type, :marketId, :quantity, :USD, :pricePerUnit)";
-	$insrtstmnt = $pdo->prepare($SQL_INSERT);
-	return $insrtstmnt->execute(['ownerId' => $userId, 'type' => $encType, 'marketId' => $marketId, 'quantity' => $coins, 'USD' => $offerUSD, 'pricePerUnit' => $PPU]);
+	$fromval = getValue($fromID);
+	$MarketValueInDollars = getValue($toID);
+
+
+	
+	$toBuyCoins = (floatval($quantityInDollars) - $fee) / $MarketValueInDollars;
+	$toSellCoins = (floatval($quantityInDollars) - $fee) / $fromval;
+
+	$r1 = inject($userid, $toID, bcdiv(floatval($toBuyCoins),1,8));
+
+	$r2 = substract($fromID, $userid, bcdiv(floatval($toSellCoins),1,8));
+
+	return $r1 && $r2;
 }
 
 
@@ -897,6 +901,16 @@ function insertValue($markid, $value)
 	$SQL_INSERT = "INSERT INTO `market-value` (marketid, value, timestamp) VALUES (:marketid, :value, :timestamp)";
 	$insrtstmnt = $pdo->prepare($SQL_INSERT);
 	$input = ['marketid' => $markid, 'value' => $value, 'timestamp' => time()];
+	$insrtstmnt->execute($input);
+}
+
+function insertPercentages($markid, $ph, $pd, $pw, $pm, $p2m, $p3m, $marketcap)
+{
+	global $pdo;
+
+	$SQL_INSERT = "INSERT INTO `market-percentages` (id, marketid, ph, pd, pw, pm, p2m, p3m, marketcap) VALUES (NULL, :marketid, :ph, :pd, :pw, :pm, :p2m, :p3m, :marketcap)";
+	$insrtstmnt = $pdo->prepare($SQL_INSERT);
+	$input = ['marketid' => $markid, 'ph' => $ph, 'pd' => $pd, 'pw' => $pw, 'pm' => $pm, 'p2m' => $p2m, 'p3m' => $p3m, 'marketcap' => $marketcap];
 	$insrtstmnt->execute($input);
 }
 
@@ -1353,7 +1367,7 @@ function getLotteryTicketPrice(){
  */
 function buyLotteryTickets($userId, $quantity) {
 	global $pdo;  
-	$SQL_INSERT = "INSERT INTO `market-lottery-tickets` (id, ownerId, quantity, timestamp) VALUES (NULL, :ownerId, :quantity, :timestamp)";
+	$SQL_º = "INSERT INTO `market-lottery-tickets` (id, ownerId, quantity, timestamp) VALUES (NULL, :ownerId, :quantity, :timestamp)";
 	$insrtstmnt = $pdo->prepare($SQL_INSERT);
 	$input =   ['ownerId' => $userId, 'quantity' => $quantity, 'timestamp' => time()];
 	return $insrtstmnt->execute($input);
