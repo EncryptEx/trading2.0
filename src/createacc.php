@@ -27,11 +27,9 @@ if(strlen($usernm) > 20 || strlen($name) > 20) {
 
 if (!doesExistUser($usernm) && $usernm != "all" && $usernm != "list") { // avoid all,list since it is used as keywords in api
 	$userid = CreateUser($usernm, $name, $passwd, 1);
-	// add $1000 worth of random crypto
-	$markets = getMarkets()->fetchAll();
-	$randomVal = random_int(0,count($markets)-1);
-	$mktId = $markets[$randomVal]['id'];
-	addition($userid, $mktId, 1000/getValue($mktId));
+	
+	// add $1000 worth of USD
+	addition($userid, 0, 1000);
 
 } else {
 	header('location:register.php?e=13'); // not correct 
