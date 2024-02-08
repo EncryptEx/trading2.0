@@ -23,7 +23,7 @@ if (time() - $lastTimestamp >= 86400) {
     echo "IM RUNNING";
 	// Pay each user
 	foreach (getAllOwnedCountries() as $ownedCountry) {
-        $valueToPay = round(getCountryBasePrice($ownedCountry['countryCode'])/1000,0);
+        $valueToPay = round(getCountryBasePrice($ownedCountry['countryCode'])/100,0);
         // get random market to pay
         $markets = getMarkets()->fetchAll();
         $marketToPay = $markets[random_int(0,count($markets)-1)]['id'];

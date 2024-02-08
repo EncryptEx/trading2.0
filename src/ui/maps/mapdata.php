@@ -97,7 +97,7 @@ foreach ($countryAcronyms as $acronym) { ?>
                 } else {
                   echo "For sale.<br>Base Price: $".number_format($price, 0, ".",",");
                 }
-                echo "<br>Generates $".number_format(($price/1000),0, ".",",")."/daily";
+                echo "<br>Generates $".number_format(($price/100),0, ".",",")."/daily";
                 
                 ?>",
     color: "<?php if ($result['bool']) {
