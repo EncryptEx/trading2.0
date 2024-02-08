@@ -26,6 +26,7 @@ $n = getname($marketid);
 $v = getValue($marketid);
 $o = getOwnership($marketid, $userid);
 $f = getLogo($marketid);
+$risk = getRisk($marketid);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +39,8 @@ $f = getLogo($marketid);
 	<?php require './../meta.php'; ?>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 
-	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+	<link rel="stylesheet"
+		href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 	<style>
 		@media (max-width: 425px) {
 			.badge {
@@ -95,23 +97,33 @@ $f = getLogo($marketid);
 			echo RetrieveError($_GET['e']);
 		}
 		?>
-		<img src="<?php echo $f; ?>" alt="" class="logo rounded-circle" width="40" height="40" style="margin-bottom:15px">
+		<img src="<?php echo $f; ?>" alt="" class="logo rounded-circle" width="40" height="40"
+			style="margin-bottom:15px">
 		<h1 style="display:inline;">
 
 			<?php echo $n; ?>
-			<span id="valuee" class="badge badge-primary" style="margin-left:10px;"><?php echo "$" . $v; ?></span>
-			<span id="percentagee" class="badge badge-<?php echo $b; ?>" style="margin-left:10px;"><?php echo $p . "%"; ?></span>
-			<a class="btn btn-light" href="./history.php?marketid=<?php echo htmlentities($_GET['marketid']); ?>"><span class="material-symbols-outlined">
+			<span id="valuee" class="badge badge-primary" style="margin-left:10px;">
+				<?php echo "$" . $v; ?>
+			</span>
+			<span id="percentagee" class="badge badge-<?php echo $b; ?>" style="margin-left:10px;">
+				<?php echo $p . "%"; ?>
+			</span>
+			<a class="btn btn-light" href="./history.php?marketid=<?php echo htmlentities($_GET['marketid']); ?>"><span
+					class="material-symbols-outlined">
 					timeline
 				</span></a>
-			<?php if ($o != 0) : ?>
-		</h1>
-		<h3 style="display:inline;">
-			<span id="ownershipp" class="badge badge-secondary" style="margin-left:10%;">
-				<?php echo number_format($o, 3) . " " . $n . "s ($" . number_format($o * $v, 2) . ")"; ?>
+			</h1>
+			<?php if ($o != 0): ?>
+			<h3 style="display:inline;">
+				<span id="ownershipp" class="badge badge-secondary" style="margin-left:10%;">
+					<?php echo number_format($o, 3) . " " . $n . "s ($" . number_format($o * $v, 2) . ")"; ?>
 
-			</span><?php endif; ?>
+				</span>
+			<?php endif; ?>
 		</h3><br>
+		<div class="muted-text">
+			<b>Risk level: </b><?php echo $risk; ?>
+			</div>
 		<div class="row">
 			<div class="col-md-8">
 				<br>
@@ -121,7 +133,9 @@ $f = getLogo($marketid);
 				</div>
 			</div>
 			<div class="col-md-4" id="buy">
-				<h3>Buy <a href="#" onclick="turnToSell();">or Sell</a> <?php echo $n ?></h3>
+				<h3>Buy <a href="#" onclick="turnToSell();">or Sell</a>
+					<?php echo $n ?>
+				</h3>
 				<!-- <h6>Buy fee: <code>0.001%</code> ($<span id="fee1"></span>) </h6> -->
 
 				<form action="currency.php?m=1" method="POST">
@@ -131,13 +145,17 @@ $f = getLogo($marketid);
 						<div class="input-group-prepend">
 							<span class="input-group-text">$</span>
 						</div>
-						<input id="money" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" onchange="moneY();" required name="money" min="0.01">
+						<input id="money" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any"
+							onchange="moneY();" required name="money" min="0.01">
 					</div>
 					<label for="coins">For this much:</label>
 					<div class="input-group mb-3">
-						<input id="coins" class="form-control" type="number" placeholder="1" step="any" onchange="coinS();" required name="coins">
+						<input id="coins" class="form-control" type="number" placeholder="1" step="any"
+							onchange="coinS();" required name="coins">
 						<div class="input-group-append">
-							<span class="input-group-text"><?php echo $n . "/s"; ?></span>
+							<span class="input-group-text">
+								<?php echo $n . "/s"; ?>
+							</span>
 						</div>
 					</div>
 					<br>
@@ -147,7 +165,9 @@ $f = getLogo($marketid);
 				</form>
 			</div>
 			<div class="col-md-4" id="sell" style="display:none;">
-				<h3><a href="#" onclick="turnToBuy();">Buy</a> or Sell <?php echo $n ?></h3>
+				<h3><a href="#" onclick="turnToBuy();">Buy</a> or Sell
+					<?php echo $n ?>
+				</h3>
 				<!-- <h6>Sell fee: <code>0.01%</code> ($<span id="fee2"></span>) </h6> -->
 				<form action="currency.php?m=2" method="POST">
 
@@ -156,13 +176,17 @@ $f = getLogo($marketid);
 						<div class="input-group-prepend">
 							<span class="input-group-text">$</span>
 						</div>
-						<input id="money2" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" onchange="moneY2();" required name="money" min="0.01">
+						<input id="money2" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any"
+							onchange="moneY2();" required name="money" min="0.01">
 					</div>
 					<label for="coins">For this much:</label>
 					<div class="input-group mb-3">
-						<input id="coins2" class="form-control" type="number" placeholder="1" step="any" onchange="coinS2();" required name="coins">
+						<input id="coins2" class="form-control" type="number" placeholder="1" step="any"
+							onchange="coinS2();" required name="coins">
 						<div class="input-group-append">
-							<span class="input-group-text"><?php echo $n . "/s"; ?></span>
+							<span class="input-group-text">
+								<?php echo $n . "/s"; ?>
+							</span>
 						</div>
 					</div>
 					<br>
@@ -272,7 +296,7 @@ $f = getLogo($marketid);
 		$.ajax({
 			url: "graphapi.php?marketid=<?php echo base64_encode($marketid); ?>",
 			method: "GET",
-			success: function(data) {
+			success: function (data) {
 				percentage = data.split("||")[1];
 				yValues = data.split("||")[0].split(",");
 				// values = values.split(",");
@@ -300,7 +324,7 @@ $f = getLogo($marketid);
 			$.ajax({
 				url: "graphapi.php?marketid=<?php echo base64_encode($marketid); ?>",
 				method: "GET",
-				success: function(data) {
+				success: function (data) {
 
 					if (data.split("||")[2].split(",")[14] != timestamps[14]) {
 

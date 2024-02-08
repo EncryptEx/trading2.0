@@ -12,9 +12,9 @@ $userid = $_SESSION['usr'];
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Tradin' Zone</title>
-	<?php require 'meta.php';?>
+	<?php require 'meta.php'; ?>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-	
+
 	<style>
 		.name {
 			margin-left: 10px;
@@ -28,6 +28,12 @@ $userid = $_SESSION['usr'];
 
 		.title {
 			margin-left: 10px;
+		}
+
+		[data-tooltip] {
+			position: relative;
+			cursor: help;
+			text-decoration: underline;
 		}
 	</style>
 </head>
@@ -46,7 +52,9 @@ $userid = $_SESSION['usr'];
 						<canvas id="balancepie"></canvas>
 					</div>
 					<div class="col-md-5  order-1 order-md-2" style="margin-bottom:10px">
-						<h3>Balance: $<?php echo number_format(getBalance($userid), 2); ?></h3>
+						<h3>Balance: $
+							<?php echo number_format(getBalance($userid), 2); ?>
+						</h3>
 					</div>
 				</div>
 				<script>
@@ -54,22 +62,22 @@ $userid = $_SESSION['usr'];
 						type: "doughnut",
 						data: {
 							labels: [<?php
-										$userBalances = getArrayBalances($userid);
-										foreach ($userBalances as $marketArray) {
-											if ($marketArray[1] != 0) {
-												echo "'" . $marketArray[0] . "',";
-											}
-										} ?>],
+							$userBalances = getArrayBalances($userid);
+							foreach ($userBalances as $marketArray) {
+								if ($marketArray[1] != 0) {
+									echo "'" . $marketArray[0] . "',";
+								}
+							} ?>],
 							datasets: [{
 								backgroundColor: ["#98DFAF", "#3F88C5", "#FFBA08", "#D00000", "#A2AEBB", "#51A3A3", "#419D78", "#C04ABC"],
 								fill: false,
 								lineTension: 0,
 
 								data: [<?php foreach ($userBalances as $marketArray) {
-											if ($marketArray[1] != 0) {
-												echo "'" . $marketArray[1] . "',";
-											}
-										} ?>],
+									if ($marketArray[1] != 0) {
+										echo "'" . $marketArray[1] . "',";
+									}
+								} ?>],
 							}]
 						},
 						options: {
@@ -111,45 +119,55 @@ $userid = $_SESSION['usr'];
 						if (!$marketLists) {
 							echo "No markets available for now.";
 						} else {
-							foreach ($marketLists as $market) :
+							foreach ($marketLists as $market):
 								$p = getPercentage($market['id']);
 								$marketVal = getValue($market['id']); ?>
 
 								<tr>
 									<td>
-										<a class="links text-decoration-none" href="./market/market.php?marketid=<?php echo base64_encode($market['id']); ?>">
+										<a class="links text-decoration-none"
+											href="./market/market.php?marketid=<?php echo base64_encode($market['id']); ?>">
 											<div style="flex:auto;">
-												<img src="<?php echo $market['logo']; ?>" alt="" class="logo rounded-circle" width="30" height="30">
-												<span class="title"><?php echo $market['name']; ?></span>
+												<img src="<?php echo $market['logo']; ?>" alt="" class="logo rounded-circle"
+													width="30" height="30">
+												<span class="title">
+													<?php echo $market['name'];?>
+												</span>
 											</div>
 										</a>
 									</td>
 									<td>
-										<span class="ownership"><?php
-																$coins = getOwnership($market['id'], $userid);
-																if ($coins != 0) {
-																	echo number_format($coins, strlen((string)$coins)) . " " . $market['name'] . "s  ($" . number_format($coins * $marketVal, 2) . ")";
-																} ?></span>
+										<span class="ownership">
+											<?php
+											$coins = getOwnership($market['id'], $userid);
+											if ($coins != 0) {
+												echo number_format($coins, strlen((string) $coins)) . " " . $market['name'] . "s  ($" . number_format($coins * $marketVal, 2) . ")";
+											} ?>
+										</span>
 									</td>
-									<td><span class="actualvalue"><?php echo "$" . $marketVal; ?></span></td>
-									<td><span class="percentage"><?php if ($p != 0) {
-																		if ($p > 0) {
-																			echo "<i class='fas fa-long-arrow-alt-up' style='color:#16C784;margin-right:10px;'></i><b style='color:#16C784;'>";
-																		}
-																		if ($p < 0) {
-																			echo "<i class='fas fa-long-arrow-alt-down' style='color:#EA3943;margin-right:10px;'></i><b style='color:#EA3943;'>";
-																		}
+									<td><span class="actualvalue">
+											<?php echo "$" . $marketVal; ?>
+										</span></td>
+									<td><span class="percentage">
+											<?php if ($p != 0) {
+												if ($p > 0) {
+													echo "<i class='fas fa-long-arrow-alt-up' style='color:#16C784;margin-right:10px;'></i><b style='color:#16C784;'>";
+												}
+												if ($p < 0) {
+													echo "<i class='fas fa-long-arrow-alt-down' style='color:#EA3943;margin-right:10px;'></i><b style='color:#EA3943;'>";
+												}
 
-																		echo number_format($p, 2) . "%</b>";
-																	} else {
-																		echo "0%";
-																	} ?></span>
+												echo number_format($p, 2) . "%</b>";
+											} else {
+												echo "0%";
+											} ?>
+										</span>
 									</td>
 								</tr>
 
 
 
-						<?php
+								<?php
 							endforeach;
 						} ?>
 					</tbody>
@@ -195,14 +213,15 @@ $userid = $_SESSION['usr'];
 			</h5><br>
 			<?php
 			$topm = getTopAirdropClaim();
-			if ($topm[0]) : ?>
+			if ($topm[0]): ?>
 				<h4>🎈 Biggest Airdrop Claimed: </h4>
 				<h5 class="text-secondary">
 					<?php echo ("$" . number_format($topm[1], 0));
 					?>
 				</h5>
-				<br><?php endif; ?>
-			
+				<br>
+			<?php endif; ?>
+
 		</div>
 	</div>
 </div>
