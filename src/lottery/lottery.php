@@ -118,14 +118,14 @@ $userid = $_SESSION['usr'];
 			<form action="lotteryBackend.php" method="POST" id="fm">
 				<div class="row">
 					<div class="col-12 col-sm-6">
-						<b>Cost of a single ticket: </b><i data-toggle="tooltip" data-placement="top" title="Prize based on the last prize awarded, if none, prize will be $20." class="far fa-info-circle"></i>
+						<b>Cost of a single ticket: </b><i data-toggle="tooltip" data-placement="top" title="Prize based on the last prize awarded, if none, prize will be $20." class="fa-solid fa-circle-info"></i>
 						<h5 id="cost">$0</h5>
 					</div>
 					<?php
 					$countTickets = getLotteryTicketCount($userid);
 					if ($countTickets != false) : ?>
 						<div class="col-12 col-sm-6">
-							<b>You aleady own:</b> <i  data-toggle="tooltip" data-placement="top" title="The more you own, the more probabilty you have to win" class="far fa-info-circle"></i>
+							<b>You aleady own:</b> <i  data-toggle="tooltip" data-placement="top" title="The more you own, the more probabilty you have to win"  class="fa-solid fa-circle-info"></i>
 							<h5><?php echo number_format($countTickets); ?> ticket/s</h5>
 						</div>
 					<?php endif; ?>
