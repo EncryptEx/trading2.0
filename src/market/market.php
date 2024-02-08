@@ -131,23 +131,13 @@ $f = getLogo($marketid);
 						<div class="input-group-prepend">
 							<span class="input-group-text">$</span>
 						</div>
-						<input id="money" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" onchange="updateVal();" required name="money" min="0.01">
+						<input id="money" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" onchange="moneY();" required name="money" min="0.01">
 					</div>
 					<label for="coins">For this much:</label>
 					<div class="input-group mb-3">
-						<input id="coins" class="form-control" type="number" placeholder="1" step="any" onchange="updateVal();" required name="coins" value="1">
+						<input id="coins" class="form-control" type="number" placeholder="1" step="any" onchange="coinS();" required name="coins">
 						<div class="input-group-append">
 							<span class="input-group-text"><?php echo $n . "/s"; ?></span>
-						</div>
-					</div>
-					<label for="money2">Which equals to:</label>
-					<div class="input-group mb-3">
-						<div class="input-group-prepend">
-							<span class="input-group-text">$</span>
-						</div>
-						<input id="money2" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" name="ppumoney" min="0.01" onchange="updateEq(this.value);">
-						<div class="input-group-append">
-							<span class="input-group-text">/<?php echo $n; ?></span>
 						</div>
 					</div>
 					<br>
@@ -161,28 +151,18 @@ $f = getLogo($marketid);
 				<!-- <h6>Sell fee: <code>0.01%</code> ($<span id="fee2"></span>) </h6> -->
 				<form action="currency.php?m=2" method="POST">
 
-					<label for="moneySell">I want to sell:</label>
+					<label for="money">I want to sell:</label>
 					<div class="input-group mb-3">
 						<div class="input-group-prepend">
 							<span class="input-group-text">$</span>
 						</div>
-						<input id="moneySell" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" onchange="updateValSell();" required name="money" min="0.01">
+						<input id="money2" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" onchange="moneY2();" required name="money" min="0.01">
 					</div>
-					<label for="coinsSell">For this much:</label>
+					<label for="coins">For this much:</label>
 					<div class="input-group mb-3">
-						<input id="coinsSell" class="form-control" type="number" placeholder="1" step="any" onchange="updateValSell();" required name="coins" value="1">
+						<input id="coins2" class="form-control" type="number" placeholder="1" step="any" onchange="coinS2();" required name="coins">
 						<div class="input-group-append">
 							<span class="input-group-text"><?php echo $n . "/s"; ?></span>
-						</div>
-					</div>
-					<label for="moneyPPU">Which equals to:</label>
-					<div class="input-group mb-3">
-						<div class="input-group-prepend">
-							<span class="input-group-text">$</span>
-						</div>
-						<input id="moneyPPU" class="form-control" type="number" placeholder="<?php echo $v ?>" step="any" name="ppumoney" min="0.01" onchange="updateEq2(this.value)">
-						<div class="input-group-append">
-							<span class="input-group-text">/<?php echo $n; ?></span>
 						</div>
 					</div>
 					<br>
@@ -192,244 +172,15 @@ $f = getLogo($marketid);
 				</form>
 			</div>
 		</div>
-		<div>
-			<br><br>
-			<div class="row">
-				<div class="col-12 col-md-6">
-					<h4>Buy Offers</h4>
-					<?php
-					$BuyOffers = getOffers("BUY", $marketid);
-					if ($BuyOffers->rowCount() > 0) :
-					?>
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>Buyer</th>
-									<th>Quantity</th>
-									<th>Price Per Unit ($)</th>
-									<th>Volume ($)</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-
-								<?php foreach ($BuyOffers as $offer) : ?>
-									<tr>
-										<td>#<?php $encryptedUser = md5($privKey . $offer['ownerId']);
-												$userLen = strlen($encryptedUser);
-												echo substr($encryptedUser, $userLen - 4, 4); ?></td>
-										<td><?php echo $offer['quantity']; ?></td>
-										<td><?php echo $offer['USD'] / $offer['quantity']; ?></td>
-										<td><?php echo $offer['USD']; ?></td>
-										<td>
-											<?php if ($offer['ownerId'] == $userid) : ?>
-
-												<button type="button" data-toggle="modal" data-target="#deleteModal<?php echo htmlentities($offer['id']); ?>" class="btn btn-sm text-dark align-middle" style="padding-bottom:10px" id="deleteButton">
-													<span class="material-symbols-outlined align-middle">
-														delete
-													</span>
-												</button>
-												<!-- remove modal asking for confirmation -->
-												<div class="modal fade" id="deleteModal<?php echo htmlentities($offer['id']); ?>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-													<div class="modal-dialog">
-														<div class="modal-content">
-															<form action="deleteOffer.php" method="POST">
-																<input type="hidden" name="id" value="<?php echo htmlentities($offer['id']); ?>">
-																<input type="hidden" name="marketId" value="<?php echo htmlentities($_GET['marketid']); ?>">
-																<div class="modal-header">
-																	<h5 class="modal-title">Delete offer</h5>
-																	<button type="button" class=" btn btn-transparent" data-dismiss="modal">
-																		<span class="material-symbols-outlined align-middle">
-																			close
-																		</span>
-																	</button>
-																</div>
-																<div class="modal-body">
-																	<p>Are you sure you want to delete <b>permanently</b> the offer and refund <code>$<?php echo htmlentities($offer['USD']); ?></code>?</p>
-
-																</div>
-																<div class="modal-footer">
-																	<button type="button" class="btn btn-secondary" data-dismiss="modal" href="delete">Close</button>
-																	<button type="submit" class="btn btn-danger">Delete</button>
-																</div>
-															</form>
-														</div>
-													</div>
-												</div>
-											<?php endif; ?>
-										</td>
-									</tr>
-
-
-
-								<?php endforeach; ?>
-							</tbody>
-						</table>
-					<?php else : ?>
-						<p>No buy offers at the moment</p>
-					<?php endif; ?>
-				</div>
-				<div class="col-12 col-md-6 mt-4 mt-md-0">
-					<h4>Sell Offers</h4>
-					<?php
-					$SellOffers = getOffers("SELL", $marketid);
-					if ($SellOffers->rowCount() > 0) :
-					?>
-						<table class="table table-striped">
-							<thead>
-								<tr>
-									<th>Seller</th>
-									<th>Quantity</th>
-									<th>Price Per Unit ($)</th>
-									<th>Volume ($)</th>
-								</tr>
-							</thead>
-							<tbody>
-
-								<?php foreach ($SellOffers as $offer) : ?>
-									<tr>
-										<td>#<?php $encryptedUser = md5($privKey . $offer['ownerId']);
-												$userLen = strlen($encryptedUser);
-												echo substr($encryptedUser, $userLen - 4, 4); ?></td>
-										<td><?php echo $offer['quantity']; ?></td>
-										<td><?php echo $offer['USD'] / $offer['quantity']; ?></td>
-										<td><?php echo $offer['USD']; ?></td>
-										<td>
-											<?php if ($offer['ownerId'] == $userid) : ?>
-
-												<button type="button" data-toggle="modal" data-target="#deleteModal<?php echo htmlentities($offer['id']); ?>" class="btn btn-sm text-dark align-middle" style="padding-bottom:10px" id="deleteButton">
-													<span class="material-symbols-outlined align-middle">
-														delete
-													</span>
-												</button>
-												<!-- remove modal asking for confirmation -->
-												<div class="modal fade" id="deleteModal<?php echo htmlentities($offer['id']); ?>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-													<div class="modal-dialog">
-														<div class="modal-content">
-															<form action="deleteOffer.php" method="POST">
-																<input type="hidden" name="id" value="<?php echo htmlentities($offer['id']); ?>">
-																<input type="hidden" name="marketId" value="<?php echo htmlentities($_GET['marketid']); ?>">
-																<div class="modal-header">
-																	<h5 class="modal-title">Delete offer</h5>
-																	<button type="button" class=" btn btn-transparent" data-dismiss="modal">
-																		<span class="material-symbols-outlined align-middle">
-																			close
-																		</span>
-																	</button>
-																</div>
-																<div class="modal-body">
-																	<p>Are you sure you want to delete <b>permanently</b> the offer and refund <code>$<?php echo htmlentities($offer['USD']); ?></code> in <b>coin</b> format?</p>
-																	<span class="text-muted">In this case you'll recieve a total amout of <?php echo htmlentities($offer['quantity']) . " " . $n; ?>/s</span>
-																</div>
-																<div class="modal-footer">
-																	<button type="button" class="btn btn-secondary" data-dismiss="modal" href="delete">Close</button>
-																	<button type="submit" class="btn btn-danger">Delete</button>
-																</div>
-															</form>
-														</div>
-													</div>
-												</div>
-											<?php endif; ?>
-										</td>
-									</tr>
-								<?php endforeach; ?>
-							</tbody>
-						</table>
-					<?php else : ?>
-						<p>No sell offers at the moment</p>
-					<?php endif; ?>
-				</div>
-
-
-				<div class="col-6">
-					<h4>Last Transactions</h4>
-					<?php
-					$transactions = getAllTransactions($marketid);
-					$rowCount = $transactions->rowCount();
-					if ($rowCount > 0) : ?>
-						<table class="table transactions table-striped">
-							<thead>
-								<tr>
-									<th>Price ($)</th>
-									<th>Quantity (nº)</th>
-									<th>Volume ($)</th>
-
-								</tr>
-							</thead>
-							<tbody>
-								<?php
-								// prepare 1st tag
-								$transactions = $transactions->fetchAll();
-								if ($transactions[0]['dollars'] / $transactions[0]['coins']  > $transactions[1]['dollars'] / $transactions[1]['coins']) {
-									$firstToPrint = "<span class='text-down material-symbols-outlined align-middle'>expand_less</span>";
-								} else if ($transactions[0]['dollars'] / $transactions[0]['coins']  < $transactions[1]['dollars'] / $transactions[1]['coins']) {
-									$firstToPrint = "<span class='text-up material-symbols-outlined align-middle'>expand_more</span>";
-								} else {
-									$firstToPrint = "<span class='text-eq material-symbols-outlined align-middle'>minimize</span>";
-								} ?><?php
-
-									// do html and php lopp
-									$i = 0;
-									foreach ($transactions as $transaction) : ?>
-
-								<?php
-										$price = $transaction['dollars'] / $transaction['coins'];
-
-										if ($i + 1 >= $rowCount) {
-											// if loop is at the last element, there's no "next element" so establish to ---
-											$nextPrice = $price;
-										} else {
-											// by default, get the next price to calculate it	
-											$nextPrice = $transactions[$i + 1]['dollars'] / $transactions[$i + 1]['coins'];
-										}
-
-
-										if ($nextPrice > $price) : ?>
-
-									<tr class="text-down">
-										<td class="indicator">
-											<?php echo htmlentities($price); ?>
-											<span class=" material-symbols-outlined align-middle">
-												expand_more
-											</span>
-
-										<?php elseif ($nextPrice < $price) : ?>
-									<tr class="text-up">
-										<td class="indicator">
-											<?php echo htmlentities($price); ?>
-											<span class="text-up material-symbols-outlined align-middle">
-												expand_less
-											</span>
-
-										<?php elseif ($nextPrice = $price) : ?>
-									<tr class="text-eq">
-										<td class="indicator">
-											<?php echo htmlentities($price); ?>
-											&nbsp;&nbsp;&nbsp;-
-										<?php endif;
-
-
-										?>
-										</td>
-										<td><?php echo htmlentities($transaction['coins']); ?></td>
-										<td><?php echo htmlentities($transaction['dollars']); ?></td>
-									</tr>
-
-								<?php $i++;
-									endforeach; ?>
-							</tbody>
-						</table>
-					<?php
-					else :
-						echo '<p>No transactions done so far..</p>';
-					endif;
-					?>
-				</div>
-			</div>
-		</div>
 	</div>
 
 	<script>
+		<?php
+		if (isset($_GET['sell'])) {
+			echo 'turnToSell();';
+		}
+		?>
+
 		function turnToSell() {
 			$('#sell').show();
 			$('#buy').hide();
@@ -439,40 +190,39 @@ $f = getLogo($marketid);
 			$('#sell').hide();
 			$('#buy').show();
 		}
+		var oneceqmoney = <?php echo $v; ?>;
 
-		function updateVal() {
-			var dollars = document.getElementById('money');
+		function moneY2() {
+			var money = document.getElementById('money2');
+			var coins = document.getElementById('coins2');
+			oneceqmoney = chart.data.datasets[0].data[14];
+
+			coins.value = money.value / oneceqmoney;
+		}
+
+		function moneY() {
+			var money = document.getElementById('money');
 			var coins = document.getElementById('coins');
-			var pricePerUnit = document.getElementById('money2');
+			oneceqmoney = chart.data.datasets[0].data[14];
 
-			pricePerUnit.value = dollars.value / coins.value;
+			coins.value = money.value / oneceqmoney;
 		}
 
-		function updateEq(valueperCoin){
-			var dollars = document.getElementById('money');
+		function coinS() {
+			var money = document.getElementById('money');
 			var coins = document.getElementById('coins');
-			
-			dollars.value = coins.value * valueperCoin;
-		}
-		
-		function updateEq2(valueperCoin){
-			var dollars = document.getElementById('moneySell');
-			var coins = document.getElementById('coinsSell');
-			
-			dollars.value = coins.value * valueperCoin;
+			oneceqmoney = chart.data.datasets[0].data[14];
+
+			money.value = coins.value * oneceqmoney;
 		}
 
+		function coinS2() {
+			var money = document.getElementById('money2');
+			var coins = document.getElementById('coins2');
+			oneceqmoney = chart.data.datasets[0].data[14];
 
-		function updateValSell() {
-			var dollars = document.getElementById('moneySell');
-			var coins = document.getElementById('coinsSell');
-			var pricePerUnit = document.getElementById('moneyPPU');
-
-			pricePerUnit.value = dollars.value / coins.value;
-
+			money.value = coins.value * oneceqmoney;
 		}
-
-
 
 		function addData(chart, label, data) {
 			chart.data.labels.push(label);
