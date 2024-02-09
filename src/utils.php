@@ -51,6 +51,31 @@ function getValue($markid)
 	}
 	return 0;
 }
+
+function getBeforeValue($markid)
+{
+	global $pdo;
+	$SQL_SELECT = "SELECT * FROM `market-value` WHERE marketid=:marketid ORDER BY `id` DESC ";
+	$selectStmt = $pdo->prepare($SQL_SELECT);
+	$input = ['marketid' => $markid];
+	$selectStmt->execute($input);
+	if ($markid == 0) {
+		return 1;
+	}
+	if ($selectStmt->rowCount() > 1) {
+		$c = 0;
+
+		foreach ($selectStmt as $row) {
+			if ($c == 0) {
+				$c++;
+				continue;
+			}
+			return $row['value'];
+		}
+	}
+	return 0;
+}
+
 function getName($markid)
 {
 	global $pdo;
@@ -1501,7 +1526,7 @@ function getRisk(int $marketId)
 		return "unknown.";
 	}
 
-	
+
 	if ($real) {
 		return "in real time.";
 	}
