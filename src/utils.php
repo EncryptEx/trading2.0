@@ -1337,7 +1337,7 @@ function getdinoMaxMilis()
 	} else if ($randomInt > 60) { // 25%
 		$milisMax = random_int(1000, 8000);
 	} else { // 60%
-		$milisMax = random_int(0000, 8000);
+		$milisMax = random_int(0000, 1500);
 	}
 	return $milisMax;
 }
