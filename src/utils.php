@@ -543,7 +543,7 @@ function canAfford($quantity, $userid, $marketid)
 
 	if ($selectStmt->rowCount() > 0) {
 		foreach ($selectStmt as $row) {
-			if (bcdiv(floatval($row['quantity']), 1, 8) >= bcdiv(floatval($quantity), 1, 8)) { // if money USD > SOMETHING then OK
+			if (bcdiv(strval($row['quantity']), 1, 8) >= bcdiv(strval($quantity), 1, 8)) { // if money USD > SOMETHING then OK
 				return [true, $row['quantity']];
 			} else {
 				return [false, $row['quantity'], floatval($quantity)];
