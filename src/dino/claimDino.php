@@ -23,10 +23,12 @@ $coinsSpent = $_SESSION['dinoCoinsSpent'];
 $newCoins = $multiplier * $coinsSpent;
 $marketIdToInject = $_SESSION['dinoMarket'];
 $marketVal = getValue($marketIdToInject);
+$maxMult = ($_SESSION['dinoMaxMilis'])/1000;
 if($multiplier == 0){
 	// player lost all. depositing all to jackpot
-	jackpotDeposit($coinsSpent*$marketVal*($_SESSION['dinoMaxMilis'])/1000, $userid);
-	header("location:dino.php?s=2&v=($". ($newCoins*$marketVal));
+	$lostMaxMoney = $coinsSpent*$marketVal*$maxMult;
+	jackpotDeposit($lostMaxMoney, $userid);
+	header("location:dino.php?s=2&v=($". ($lostMaxMoney));
 	die();
 	
 }
@@ -34,7 +36,8 @@ unset($_SESSION['dinoCoinsSpent']);
 unset($_SESSION['dinoMarket']);
 unset($_SESSION['dinoMaxMilis']);
 
-inject($userid, 0, $newCoins*$marketVal);
+$newDollars = $newCoins*$marketVal;
+inject($userid, 0, $newDollars);
 
-header("location:dino.php?s=1&v=".$newCoins." ". getName($marketIdToInject). " ($". ($newCoins*$marketVal) .") = ". $multiplier ." x ". $coinsSpent);
+header("location:dino.php?s=1&v=".$newCoins." ". getName($marketIdToInject). " ($". ($newDollars) .") = ". number_format($multiplier, 2) ." x ". $coinsSpent) . ' coins';
 
