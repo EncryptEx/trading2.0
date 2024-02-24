@@ -10,6 +10,7 @@ $privKey = '';
 
 // google ReCaptcha API key
 $captchaSecret = '';
+$captchaPublic = '';
 
 // Password that you will need to set to do various automated actions
 $desiredAuthKey = '';
