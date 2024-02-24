@@ -543,7 +543,7 @@ function canAfford($quantity, $userid, $marketid)
 
 	if ($selectStmt->rowCount() > 0) {
 		foreach ($selectStmt as $row) {
-			if (bcdiv(floatval($row['quantity']), 1, 8) >= bcdiv(floatval($quantity), 1, 8)) { // if money USD > SOMETHING then OK
+			if (bcdiv(strval($row['quantity']), 1, 8) >= bcdiv(strval($quantity), 1, 8)) { // if money USD > SOMETHING then OK
 				return [true, $row['quantity']];
 			} else {
 				return [false, $row['quantity'], floatval($quantity)];
@@ -1337,7 +1337,7 @@ function getdinoMaxMilis()
 	} else if ($randomInt > 60) { // 25%
 		$milisMax = random_int(1000, 8000);
 	} else { // 60%
-		$milisMax = random_int(0000, 8000);
+		$milisMax = random_int(0000, 1500);
 	}
 	return $milisMax;
 }
