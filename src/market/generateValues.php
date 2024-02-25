@@ -32,7 +32,7 @@ if ($selectStmt->rowCount() > 0) {
 			$min = $val * (1 - floatval($row['fluctuationValue']));
 			$max = $lastval * (1 + (floatval($row['fluctuationValue'])));
 
-			$newValue = random_int($min, $max);
+			$newValue = random_int(min($min, $max),max($min, $max));
 
 			insertValue($row['id'], $newValue);
 
