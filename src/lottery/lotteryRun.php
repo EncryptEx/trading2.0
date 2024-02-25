@@ -37,24 +37,23 @@ if($lastPrize['data']['timestamp'] + 604.800 < time()){
 			$iterator = $iterator + $ticketsOwned;
 			continue;
 		}
-		// TODO: could be more optimized this part.
-		for ($i=0; $i < $ticketsOwned; $i++) { 
-			$iterator++;
-			if($iterator == $winnerNumber){
-				$userWinner = $ownerId;
-				break;
-			}
+		
+		if($winnerNumber>$iterator and $ticketsOwned+$iterator >=$winnerNumber) { 
+			$userWinner = $ownerId;
+			break;
 		}
 	}
 	$priceWon = getJackPotValue();
-	inject($userWinner, 0, $priceWon);
+	$err = inject($userWinner, 0, $priceWon);
 	// save win lottery action
 	$timestamp = time();
 	addLotteryWinner($userWinner,$priceWon, $timestamp);
 	// remove all tickets
 	wipeTicketOwnership($timestamp);
+	
 	// set jackpot to 0
-	clearJackpot($timestamp);
+	clearJackpot();
+	
 } else {
 	echo "Lottery not ready to roll.";
 }

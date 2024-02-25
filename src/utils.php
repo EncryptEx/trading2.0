@@ -1492,12 +1492,12 @@ function wipeTicketOwnership($timestamp)
  * Updates all jackpot quantities in order to set them to 0.
  * @return bool true if the action went great when working with the DB.
  */
-function clearJackpot($timestamp)
+function clearJackpot()
 {
 	global $pdo;
 	$statement = "UPDATE `market-lottery-value` SET lastClaimed=:lastClaimed";
 	$preparedstmt = $pdo->prepare($statement);
-	$input = ['lastClaimed' => $timestamp];
+	$input = ['lastClaimed' => 1];
 	return $preparedstmt->execute($input);
 }
 
