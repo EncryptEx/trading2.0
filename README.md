@@ -2,11 +2,10 @@
 <h1 align="center">Tradin'Zone</h1>
 <p align="center">The funniest fake-trading platform for friends. Now reversioned.</p>
 <p align="center">
-<img src="https://img.shields.io/github/repo-size/EncryptEx/trading"/>
-<img src="https://img.shields.io/github/languages/top/EncryptEx/trading"/>
-<img src="https://img.shields.io/github/last-commit/EncryptEx/trading"/>
+<img src="https://img.shields.io/github/repo-size/EncryptEx/trading2.0"/>
+<img src="https://img.shields.io/github/languages/top/EncryptEx/trading2.0"/>
+<img src="https://img.shields.io/github/last-commit/EncryptEx/trading2.0"/>
 <img src="https://img.shields.io/badge/License-MIT-green"/>
-<img src="https://img.shields.io/discord/729442309145493597"/>
 
 ## Arquitecture
 
