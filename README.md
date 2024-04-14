@@ -56,4 +56,9 @@ Regarding the __passive income country service__: Make an HTTP request **daily**
 ``example.com/passiveIncome.php?auth=YourPasswordSavedInCredentialsFile``
 
 
+## Extra
+
+I'm using commitlint to create [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/). So that's why i've some npm stuff. Nothing to worry about and its not necessary at all.
+
+
 <p align="center"><a href="https://github.com/EncryptEx/trading/"><img src="http://randojs.com/images/barsSmallTransparentBackground.gif" alt="Animated footer bars" width="100%"/></a></p>
