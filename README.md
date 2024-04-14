@@ -49,11 +49,11 @@ These actions need to be preformed automatically and periodically, so I recommen
 
 Regarding the __airdrops__: Make an HTTP request **hourly** to:
 
-``example.com/genereateAirdrops.php?auth=YourPasswordSavedInCredentialsFile``
+``example.com/airdrops/genereateAirdrops.php?auth=YourPasswordSavedInCredentialsFile``
 
 Regarding the __passive income country service__: Make an HTTP request **daily** to:
 
-``example.com/passiveIncome.php?auth=YourPasswordSavedInCredentialsFile``
+``example.com/map/passiveIncome.php?auth=YourPasswordSavedInCredentialsFile``
 
 
 ## Extra
