@@ -29,8 +29,8 @@ if ($selectStmt->rowCount() > 0) {
 			$val = getValue($row['id']);
 			$lastval = getBeforeValue($row['id']);
 			// generate random value
-			$min = $val * (1 - floatval($row['fluctuationValue']));
-			$max = $lastval * (1 + (floatval($row['fluctuationValue'])));
+			$min = min($val,$lastval) * (1 - floatval($row['fluctuationValue']));
+			$max = max($val,$lastval) * (1 + (floatval($row['fluctuationValue'])));
 
 			$newValue = random_int(min($min, $max),max($min, $max));
 
