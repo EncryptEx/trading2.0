@@ -1,13 +1,13 @@
 <p align="center"><a href="#"><img src="https://www.iconpacks.net/icons/1/free-bitcoin-icon-798-thumb.png" alt="Coin" height="60"/></a></p>
 <h1 align="center">Tradin'Zone</h1>
-<p align="center">The funniest fake-trading platform for friends. Now reversioned.</p>
+<p align="center">The funniest fake-trading platform for friends. Now reloaded.</p>
 <p align="center">
 <img src="https://img.shields.io/github/repo-size/EncryptEx/trading2.0"/>
 <img src="https://img.shields.io/github/languages/top/EncryptEx/trading2.0"/>
 <img src="https://img.shields.io/github/last-commit/EncryptEx/trading2.0"/>
 <img src="https://img.shields.io/badge/License-MIT-green"/>
 
-## Arquitecture
+## Architecture
 
 Project designed using PHP, SQL, JS, CSS, HTML.
 
@@ -24,25 +24,41 @@ This is the second version and public one. The first one didn't use the offer-de
 
 ## Installation
 
-1. First, you'll have to paste the code inside the public folder of your hosting provider.
+### Prerequisites
 
-2. Then you'll have to create the ``src/credentials.php`` file, you can do it by changing the file name:
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
-```sh
-cd src && mv credentials.example.php credentials.php
-```
+### Setup
 
-Next, you'll have to add your secret keys, as explained inside the credentials.php file.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/EncryptEx/trading2.0.git
+   cd trading2.0
+   ```
 
+2. **Configure Environment Variables**
+   Copy the example environment file and configure it:
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` and fill in your database credentials, port settings, and API keys.
 
-3. Once credentials are correct and saved into the file, you can run the website and access the installation path (let's say your website is example.com, the installation location would be:
-**example.com/install**
+3. **Start with Docker**
+   Build and start the containers:
+   ```bash
+   docker-compose up -d --build
+   ```
 
-4. You'll see a form asking you to create a user with its password. You may also check if the DB credentials are correct.
+4. **Web Installation**
+   Once the containers are running, access the installation wizard in your browser:
+   `http://localhost:<TRADING_PORT>/install`
+   *(Replace `<TRADING_PORT>` with the port you defined in your `.env` file)*
 
-5. After creating the user, the installation wizard will report if there was any problem while installing Tradin'Zone.
+   Follow the on-screen instructions to create your admin user and initialize the database.
 
-6. Once everything is ok, you can click the **DELETE INSTALLATION FILE** button to conclude the installation and avoiding anyone to expose your database credentials.
+5. **Cleanup**
+   After the installation is complete, click the **DELETE INSTALLATION FILE** button in the wizard to secure your installation.
 
 ## Automatizations
 These actions need to be preformed automatically and periodically, so I recommend you to use [UptimeRobot](https://uptimerobot.com/).
@@ -58,7 +74,7 @@ Regarding the __passive income country service__: Make an HTTP request **daily**
 
 ## Extra
 
-(Work in Progress) I'm using Conventional Commits to create [standarized commits](https://www.conventionalcommits.org/en/v1.0.0/). 
+(Work in Progress) I'm using Conventional Commits to create [standardized commits](https://www.conventionalcommits.org/en/v1.0.0/). 
 
 
 

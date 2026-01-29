@@ -2,13 +2,13 @@
 //
 // Utils File --> Main File where magic happens
 //
-require 'credentials.php';
+require __DIR__ . '/credentials.php';
 
 // error_reporting(E_ALL & ~E_WARNING & ~E_NOTICE);
 
 
 // Start DB
-$dsn = "mysql:host={$host};dbname={$dbname};charset={$charset}";
+$dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset={$charset}";
 $options = [
 	PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // highly recommended
 	PDO::ATTR_EMULATE_PREPARES => false // ALWAYS! ALWAYS! ALWAYS!
@@ -18,13 +18,14 @@ $pdo = new PDO($dsn, $user, $pass, $options);
 function Islogged($usr)
 {
 	if (!isset($usr)) {
-		header("location:login.php");
+		header("location:/login.php");
 		die();
 	}
 }
 
 
 // global used constant
+$FEE = 0;
 $countryAcronyms = ["AF", "AO", "AL", "AE", "AR", "AM", "AU", "AT", "AZ", "BI", "BE", "BJ", "BF", "BD", "BG", "BH", "BA", "BY", "BZ", "BO", "BR", "BN", "BT", "BW", "CF", "CA", "CH", "CL", "CN", "CI", "CM", "CD", "CG", "CO", "CR", "CU", "CZ", "DE", "DJ", "DK", "DO", "DZ", "EC", "EG", "ER", "EE", "ET", "FI", "FJ", "GA", "GB", "GE", "GH", "GN", "GM", "GW", "GQ", "GR", "GL", "GT", "GY", "HN", "HR", "HT", "HU", "ID", "IN", "IE", "IR", "IQ", "IS", "IL", "IT", "JM", "JO", "JP", "KZ", "KE", "KG", "KH", "KR", "XK", "KW", "LA", "LB", "LR", "LY", "LK", "LS", "LT", "LU", "LV", "MA", "MD", "MG", "MX", "MK", "ML", "MM", "ME", "MN", "MZ", "MR", "MW", "MY", "NA", "NE", "NG", "NI", "NL", "NO", "NP", "NZ", "OM", "PK", "PA", "PE", "PH", "PG", "PL", "KP", "PT", "PY", "PS", "QA", "RO", "RU", "RW", "EH", "SA", "SD", "SS", "SN", "SL", "SV", "RS", "SR", "SK", "SI", "SE", "SZ", "SY", "TD", "TG", "TH", "TJ", "TM", "TL", "TN", "TR", "TW", "TZ", "UG", "UA", "UY", "US", "UZ", "VE", "VN", "VU", "YE", "ZA", "ZM", "ZW", "SO", "GF", "FR", "ES", "AW", "AI", "AD", "AG", "BS", "BM", "BB", "KM", "CV", "KY", "DM", "FK", "FO", "GD", "HK", "KN", "LC", "LI", "MF", "MV", "MT", "MS", "MU", "NC", "NR", "PN", "PR", "PF", "SG", "SB", "ST", "SX", "SC", "TC", "TO", "TT", "VC", "VG", "VI", "CY", "RE", "YT", "MQ", "GP", "CW", "IC"];
 
 
@@ -331,7 +332,7 @@ function getTopMarket()
 	// foreach (getMarkets() as $row) {
 	//   $c++;
 	// }
-	$SQL_SELECT = "SELECT MAX(`value`), `marketid` FROM `market-value`";
+	$SQL_SELECT = "SELECT `value`, `marketid` FROM `market-value` ORDER BY `value` DESC LIMIT 1";
 	$selectStmt = $pdo->prepare($SQL_SELECT);
 	$input = [];
 	$selectStmt->execute($input);
@@ -339,7 +340,7 @@ function getTopMarket()
 		// array_push($total, $row['value']);
 		foreach ($selectStmt as $row) {
 			// array_push($prices, $row['marketid'], $row['value']);
-			return [$row['marketid'], $row['MAX(`value`)']];
+			return [$row['marketid'], $row['value']];
 		}
 		// $value = max($prices);
 		// return [$value,array_search($value, $prices)];
@@ -1354,9 +1355,9 @@ function getJackPotValue()
 	$input = [];
 	$selectStmt->execute($input);
 	if ($selectStmt->rowCount() > 0) {
-		return $selectStmt->fetchAll()[0]['SUM(quantity)'];
+		return (float) $selectStmt->fetchAll()[0]['SUM(quantity)'];
 	}
-	return false;
+	return 0.0;
 }
 
 /** 

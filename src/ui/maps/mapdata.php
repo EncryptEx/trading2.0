@@ -88,18 +88,22 @@ state_specific: {
  */
 foreach ($countryAcronyms as $acronym) { ?>
   <?php echo $acronym; ?>: {
-    name: "<?php $cName = getCountryName($acronym); echo $cName; ?>",
-    description: "<?php
+    name: <?php $cName = getCountryName($acronym); echo json_encode($cName); ?>,
+    description: <?php
                 $result = isCountryOwned($acronym);
                 $price = getCountryBasePrice($acronym);
-                if ($result['bool']) {
-                  echo "Owned by: " . getUserName($result['data']['ownerId']);
-                } else {
-                  echo "For sale.<br>Base Price: $".number_format($price, 0, ".",",");
+                if ($price === null) {
+                  $price = 0.0;
                 }
-                echo "<br>Generates $".number_format(($price/100),0, ".",",")."/daily";
-                
-                ?>",
+                $desc = "";
+                if ($result['bool']) {
+                  $desc .= "Owned by: " . getUserName($result['data']['ownerId']);
+                } else {
+                  $desc .= "For sale.<br>Base Price: $" . number_format($price, 0, ".", ",");
+                }
+                $desc .= "<br>Generates $" . number_format(($price / 100), 0, ".", ",") . "/daily";
+                echo json_encode($desc);
+                ?>,
     color: "<?php if ($result['bool']) {
             $color = getUserColor($result['data']['ownerId']);
             echo "#".$color ;
@@ -118,7 +122,7 @@ foreach ($countryAcronyms as $acronym) { ?>
       $extraS = "";
     }
     // echo "http" . $extraS . "://" . $_SERVER['HTTP_HOST'] . str_replace(basename($_SERVER['SCRIPT_FILENAME']), "", "/buyCountry.php?c=".$acronym);
-    echo "javascript:confirmBuy('".$acronym."', '". $cName. "', ".$price.");";
+    echo "javascript:confirmBuy('".$acronym."', '". addslashes($cName). "', ".$price.");";
   } ?>"},
 <?php
 }

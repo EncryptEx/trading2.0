@@ -1,8 +1,8 @@
 <?php
 session_start();
 require './../utils.php';
-Islogged($_SESSION['usr']);
-$userid = $_SESSION['usr'];
+Islogged($_SESSION['usr'] ?? null);
+$userid = $_SESSION['usr'] ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="en">

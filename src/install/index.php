@@ -1,8 +1,8 @@
 <?php
 $isInstalling = isset($_GET['start']);
 if (isset($_GET['delete'])) {
-	unlink("./markets.sql");
-	unlink("./index.php");
+	@unlink("./markets.sql");
+	@unlink("./index.php");
 	header("location:./../index.php");
 	die();
 }

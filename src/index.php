@@ -1,7 +1,7 @@
 <?php
 session_start();
 require 'utils.php';
-Islogged($_SESSION['usr']);
+Islogged($_SESSION['usr'] ?? null);
 $userid = $_SESSION['usr'];
 ?>
 <!DOCTYPE html>

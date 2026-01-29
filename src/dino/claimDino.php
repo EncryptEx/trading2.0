@@ -26,7 +26,7 @@ $marketVal = getValue($marketIdToInject);
 $maxMult = ($_SESSION['dinoMaxMilis'])/1000;
 if($multiplier == 0){
 	// player lost all. depositing all to jackpot
-	$lostMaxMoney = $coinsSpent*$marketVal*$maxMult;
+	$lostMaxMoney = min($coinsSpent*$marketVal, $coinsSpent*$marketVal*$maxMult);
 	jackpotDeposit($lostMaxMoney, $userid);
 	header("location:dino.php?s=2&v=($". ($lostMaxMoney));
 	die();
