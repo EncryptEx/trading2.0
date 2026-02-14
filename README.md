@@ -65,11 +65,19 @@ These actions need to be preformed automatically and periodically, so I recommen
 
 Regarding the __airdrops__: Make an HTTP request **hourly** to:
 
-``example.com/airdrops/genereateAirdrops.php?auth=YourPasswordSavedInCredentialsFile``
+``example.com/airdrops/generateAirdrops.php?auth=YourPasswordSavedInCredentialsFile``
 
 Regarding the __passive income country service__: Make an HTTP request **daily** to:
 
 ``example.com/map/passiveIncome.php?auth=YourPasswordSavedInCredentialsFile``
+
+Regarding the __market values generator__: Make an HTTP request **every minute** (or your preferred interval) to:
+
+``example.com/market/generateValues.php?auth=YourPasswordSavedInCredentialsFile``
+
+To also update real crypto prices (requires CoinMarketCap API key and configuration), add `&realMode=1`:
+
+``example.com/market/generateValues.php?auth=YourPasswordSavedInCredentialsFile&realMode=1``
 
 
 ## Extra
