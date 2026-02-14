@@ -32,5 +32,6 @@ $captchaPublic = $_ENV['GOOGLE_CAPTCHA_PUBLIC'] ?? '';
 // Other Configs found in env list
 $tradingPort = $_ENV['TRADING_PORT'] ?? 80;
 $desiredAuthKey = $_ENV['DESIRED_AUTH_KEY'] ?? '';
+$coinMarketCapKey = $_ENV['COIN_MARKET_CAP_KEY'] ?? '';
 $countyBasePrice = $_ENV['COUNTY_BASE_PRICE'] ?? 10000;
 $FEE = $_ENV['TRANSACTION_FEE'] ?? 0.01;
